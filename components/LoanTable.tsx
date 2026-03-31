@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import type { Loan } from '@/lib/types';
 import type { FilterState } from './FilterBar';
+import { AMOUNT_BUCKETS } from '@/lib/constants';
 
 interface LoanTableProps {
   loans: Loan[];
@@ -92,36 +93,48 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
   // Apply filters
   const filteredLoans = loans.filter((loan) => {
     // Borrower filter
-    if (filters.borrower) {
-      const borrowers = loan.borrowers.split(',').map(b => b.trim().toLowerCase());
-      const searchTerm = filters.borrower.toLowerCase();
-      if (!borrowers.some(b => b.includes(searchTerm))) {
+    if (filters.borrowers.length > 0) {
+      const loanBorrowers = loan.borrowers.split(',').map(b => b.trim());
+      if (!loanBorrowers.some(b => filters.borrowers.includes(b))) {
         return false;
       }
     }
 
     // Lender filter
-    if (filters.lender) {
-      const lenders = loan.lenders.split(',').map(l => l.trim().toLowerCase());
-      const searchTerm = filters.lender.toLowerCase();
-      if (!lenders.some(l => l.includes(searchTerm))) {
+    if (filters.lenders.length > 0) {
+      const loanLenders = loan.lenders.split(',').map(l => l.trim());
+      if (!loanLenders.some(l => filters.lenders.includes(l))) {
         return false;
       }
     }
 
-    // Min amount filter
-    if (filters.minAmount !== null && loan.loan_amount < filters.minAmount) {
-      return false;
-    }
-
-    // Max amount filter
-    if (filters.maxAmount !== null && loan.loan_amount > filters.maxAmount) {
-      return false;
+    // Amount bucket filter
+    if (filters.amountBuckets.length > 0) {
+      const amountMatch = filters.amountBuckets.some(label => {
+        const bucket = AMOUNT_BUCKETS.find(b => b.label === label);
+        return bucket
+          ? loan.loan_amount >= bucket.min && loan.loan_amount <= bucket.max
+          : false;
+      });
+      if (!amountMatch) {
+        return false;
+      }
     }
 
     // Urgency filter
-    if (filters.urgency !== 'All' && loan.loan_urgency !== filters.urgency) {
+    if (filters.urgencies.length > 0 && !filters.urgencies.includes(loan.loan_urgency)) {
       return false;
+    }
+
+    // Date range filter
+    if (filters.startDate || filters.endDate) {
+      const loanDate = new Date(loan.record_date);
+      if (filters.startDate && loanDate < new Date(filters.startDate)) {
+        return false;
+      }
+      if (filters.endDate && loanDate > new Date(filters.endDate)) {
+        return false;
+      }
     }
 
     return true;

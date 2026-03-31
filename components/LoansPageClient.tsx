@@ -11,16 +11,21 @@ interface LoansPageClientProps {
 
 export default function LoansPageClient({ loans }: LoansPageClientProps) {
   const [filters, setFilters] = useState<FilterState>({
-    borrower: '',
-    lender: '',
-    minAmount: null,
-    maxAmount: null,
-    urgency: 'All',
+    borrowers: [],
+    lenders: [],
+    amountBuckets: [],
+    urgencies: [],
+    startDate: '',
+    endDate: '',
   });
 
   return (
     <div>
-      <FilterBar filters={filters} onFilterChange={setFilters} />
+      <FilterBar
+        filters={filters}
+        onFilterChange={setFilters}
+        loans={loans}
+      />
       <LoanTable loans={loans} filters={filters} />
     </div>
   );

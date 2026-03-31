@@ -1,18 +1,22 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import type { Loan } from '@/lib/types';
+import { AMOUNT_BUCKETS } from '@/lib/constants';
 
 export interface FilterState {
-  borrower: string;
-  lender: string;
-  minAmount: number | null;
-  maxAmount: number | null;
-  urgency: string;
+  borrowers: string[];
+  lenders: string[];
+  amountBuckets: string[];
+  urgencies: string[];
+  startDate: string;
+  endDate: string;
 }
 
 interface FilterBarProps {
   onFilterChange: (filters: FilterState) => void;
   filters: FilterState;
+  loans: Loan[];
 }
 
 const colors = {
@@ -25,45 +29,174 @@ const colors = {
   secondaryText: '#5e7391',
 };
 
-function UrgencyDropdown({ value, onChange }: {
-  value: string,
-  onChange: (val: string) => void
-}) {
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const options = ['All urgencies', 'Critical', 'Near-term', 'Mid-term', 'Long-term'];
-  const values = ['All', 'critical', 'near-term', 'mid-term', 'long-term'];
-  const selectedLabel = options[values.indexOf(value)] ?? 'All urgencies';
-
-  // Click outside handler
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [open]);
+function Tooltip({ content }: { content: React.ReactNode }) {
+  const [visible, setVisible] = useState(false);
 
   return (
-    <div ref={dropdownRef} style={{ position: 'relative', width: '100%' }}>
+    <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+      <div
+        onMouseEnter={() => setVisible(true)}
+        onMouseLeave={() => setVisible(false)}
+        style={{
+          width: '16px',
+          height: '16px',
+          borderRadius: '50%',
+          backgroundColor: '#dae6f1',
+          color: '#5e7391',
+          fontSize: '11px',
+          fontWeight: 700,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'default',
+          flexShrink: 0,
+          userSelect: 'none',
+        }}
+      >
+        ?
+      </div>
+      {visible && (
+        <div style={{
+          position: 'absolute',
+          top: '24px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: '#2b333f',
+          color: '#ffffff',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          width: '260px',
+          zIndex: 200,
+          boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+          fontSize: '12px',
+          lineHeight: '1.6',
+          pointerEvents: 'none',
+        }}>
+          <div style={{ fontWeight: 700, marginBottom: '8px', color: '#f0c811' }}>
+            Urgency Definitions
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ whiteSpace: 'nowrap' }}><span style={{ color: '#ef4444', fontWeight: 600 }}>Critical</span> — Expires in under 6 months</div>
+            <div style={{ whiteSpace: 'nowrap' }}><span style={{ color: '#f0c811', fontWeight: 600 }}>Near-term</span> — Expires in 6–18 months</div>
+            <div style={{ whiteSpace: 'nowrap' }}><span style={{ color: '#7cacdb', fontWeight: 600 }}>Mid-term</span> — Expires in 18 months – 3 years</div>
+            <div style={{ whiteSpace: 'nowrap' }}><span style={{ color: '#92a6c2', fontWeight: 600 }}>Long-term</span> — Expires in 3–5 years</div>
+          </div>
+          {/* Arrow pointing up */}
+          <div style={{
+            position: 'absolute',
+            top: '-6px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '12px',
+            height: '12px',
+            backgroundColor: '#2b333f',
+            clipPath: 'polygon(50% 0, 0 100%, 100% 100%)',
+          }} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DateInput({
+  value,
+  onChange,
+  placeholder
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <input
+      type="date"
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      style={{
+        width: '140px',
+        flexShrink: 0,
+        padding: '8px 16px',
+        backgroundColor: '#ffffff',
+        border: `1px solid ${value ? '#1c71af' : '#dae6f1'}`,
+        borderRadius: '8px',
+        color: value ? '#2b333f' : '#92a6c2',
+        fontFamily: 'inherit',
+        fontSize: 'inherit',
+        outline: 'none',
+        cursor: 'pointer',
+      }}
+      onFocus={e => e.target.style.borderColor = '#f0c811'}
+      onBlur={e => e.target.style.borderColor = value ? '#1c71af' : '#dae6f1'}
+    />
+  );
+}
+
+function MultiSelectDropdown({
+  options,
+  selected,
+  onChange,
+  placeholder,
+  getLabel
+}: {
+  options: string[];
+  selected: string[];
+  onChange: (val: string[]) => void;
+  placeholder: string;
+  getLabel?: (val: string) => string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const ref = useRef<HTMLDivElement>(null);
+
+  const formatLabel = getLabel || ((val: string) => val);
+
+  // Click outside to close
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Reset search query when dropdown closes
+  useEffect(() => {
+    if (!open) {
+      setSearchQuery('');
+    }
+  }, [open]);
+
+  const toggle = (option: string) => {
+    if (selected.includes(option)) {
+      onChange(selected.filter(s => s !== option));
+    } else {
+      onChange([...selected, option]);
+    }
+  };
+
+  // Filter options by search query
+  const filteredOptions = options.filter(o =>
+    o.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const displayValue = selected.length === 0
+    ? placeholder
+    : selected.map(formatLabel).join(', ');
+
+  return (
+    <div ref={ref} style={{ position: 'relative', width: '100%' }}>
       <button
         type="button"
         onClick={() => setOpen(!open)}
         style={{
           width: '100%',
-          padding: '0.5rem 1rem',
-          backgroundColor: colors.white,
-          border: `1px solid ${colors.lightBlueTint}`,
-          borderRadius: '0.375rem',
-          color: value === 'All' ? colors.placeholder : colors.primaryText,
+          padding: '8px 16px',
+          backgroundColor: '#ffffff',
+          border: `1px solid ${selected.length > 0 ? '#1c71af' : '#dae6f1'}`,
+          borderRadius: '8px',
+          color: selected.length > 0 ? '#2b333f' : '#92a6c2',
           textAlign: 'left',
           cursor: 'pointer',
           display: 'flex',
@@ -71,52 +204,294 @@ function UrgencyDropdown({ value, onChange }: {
           alignItems: 'center',
           fontFamily: 'inherit',
           fontSize: 'inherit',
-          lineHeight: '1.5',
-          boxSizing: 'border-box',
+          overflow: 'hidden',
         }}
       >
-        <span>{selectedLabel}</span>
-        <span style={{ color: colors.secondaryText, fontSize: '10px' }}>▼</span>
+        <span style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          flex: 1,
+          marginRight: '8px'
+        }}>
+          {displayValue}
+        </span>
+        <span style={{ color: '#5e7391', fontSize: '10px', flexShrink: 0 }}>▼</span>
       </button>
+
       {open && (
         <div style={{
           position: 'absolute',
           top: '100%',
           left: 0,
           right: 0,
-          backgroundColor: colors.white,
-          border: `1px solid ${colors.lightBlueTint}`,
+          backgroundColor: '#ffffff',
+          border: '1px solid #dae6f1',
           borderRadius: '8px',
           marginTop: '4px',
-          zIndex: 50,
+          zIndex: 100,
           boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-          overflow: 'hidden',
+          maxHeight: '280px',
+          overflowY: 'auto',
         }}>
-          {options.map((label, i) => (
+          {/* Clear link at top */}
+          {selected.length > 0 && (
             <div
-              key={label}
-              onClick={() => { onChange(values[i]); setOpen(false); }}
+              onClick={() => onChange([])}
               style={{
                 padding: '8px 16px',
                 cursor: 'pointer',
-                color: value === values[i] ? colors.primaryText : colors.secondaryText,
-                backgroundColor: value === values[i] ? colors.lightBlueTint : colors.white,
-                fontWeight: value === values[i] ? 600 : 400,
+                color: '#1c71af',
+                fontSize: '12px',
+                fontWeight: 600,
+                borderBottom: '1px solid #dae6f1',
+                backgroundColor: '#f5fafc',
               }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = colors.background)}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = value === values[i] ? colors.lightBlueTint : colors.white)}
             >
-              {label}
+              Clear selection ({selected.length})
+            </div>
+          )}
+
+          {/* Search input */}
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            onClick={e => e.stopPropagation()}
+            autoFocus
+            style={{
+              width: '100%',
+              padding: '8px 16px',
+              border: 'none',
+              borderBottom: '1px solid #dae6f1',
+              outline: 'none',
+              fontFamily: 'inherit',
+              fontSize: '13px',
+              color: '#2b333f',
+              backgroundColor: '#ffffff',
+            }}
+          />
+
+          {/* Options list */}
+          {filteredOptions.map(option => (
+            <div
+              key={option}
+              onClick={() => toggle(option)}
+              style={{
+                padding: '8px 16px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                backgroundColor: selected.includes(option) ? '#f0f8ff' : '#ffffff',
+                color: '#2b333f',
+                fontSize: '13px',
+              }}
+              onMouseEnter={e => {
+                if (!selected.includes(option))
+                  e.currentTarget.style.backgroundColor = '#f5fafc';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.backgroundColor =
+                  selected.includes(option) ? '#f0f8ff' : '#ffffff';
+              }}
+            >
+              {/* Checkmark */}
+              <span style={{
+                width: '16px',
+                height: '16px',
+                borderRadius: '4px',
+                border: `2px solid ${selected.includes(option) ? '#1c71af' : '#dae6f1'}`,
+                backgroundColor: selected.includes(option) ? '#1c71af' : '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                fontSize: '10px',
+                color: '#ffffff',
+              }}>
+                {selected.includes(option) ? '✓' : ''}
+              </span>
+              <span style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}>
+                {formatLabel(option)}
+              </span>
             </div>
           ))}
+
+          {filteredOptions.length === 0 && (
+            <div style={{
+              padding: '12px 16px',
+              color: '#92a6c2',
+              fontSize: '13px'
+            }}>
+              No options available
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
 
-export default function FilterBar({ onFilterChange, filters }: FilterBarProps) {
-  const handleChange = (key: keyof FilterState, value: string | number | null) => {
+export default function FilterBar({ onFilterChange, filters, loans }: FilterBarProps) {
+  // Extract all borrowers and lenders from loans
+  const allBorrowers = useMemo(() => {
+    const set = new Set<string>();
+    loans.forEach(loan =>
+      loan.borrowers.split(',').map(b => b.trim()).filter(Boolean).forEach(b => set.add(b))
+    );
+    return Array.from(set).sort();
+  }, [loans]);
+
+  const allLenders = useMemo(() => {
+    const set = new Set<string>();
+    loans.forEach(loan =>
+      loan.lenders.split(',').map(l => l.trim()).filter(Boolean).forEach(l => set.add(l))
+    );
+    return Array.from(set).sort();
+  }, [loans]);
+
+  // Dependent filtering: available lenders based on selected borrowers, urgencies, and amount buckets
+  const availableLenders = useMemo(() => {
+    if (filters.borrowers.length === 0 && filters.urgencies.length === 0 && filters.amountBuckets.length === 0 && !filters.startDate && !filters.endDate) return allLenders;
+    const matchingLoans = loans.filter(loan => {
+      const borrowerMatch = filters.borrowers.length === 0 ||
+        loan.borrowers.split(',').map(b => b.trim())
+          .some(b => filters.borrowers.includes(b));
+      const urgencyMatch = filters.urgencies.length === 0 ||
+        filters.urgencies.includes(loan.loan_urgency);
+      const amountMatch = filters.amountBuckets.length === 0 ||
+        filters.amountBuckets.some(label => {
+          const bucket = AMOUNT_BUCKETS.find(b => b.label === label);
+          return bucket
+            ? loan.loan_amount >= bucket.min && loan.loan_amount <= bucket.max
+            : false;
+        });
+      const dateMatch = (() => {
+        if (!filters.startDate && !filters.endDate) return true;
+        const loanDate = new Date(loan.record_date);
+        if (filters.startDate && loanDate < new Date(filters.startDate)) return false;
+        if (filters.endDate && loanDate > new Date(filters.endDate)) return false;
+        return true;
+      })();
+      return borrowerMatch && urgencyMatch && amountMatch && dateMatch;
+    });
+    const set = new Set<string>();
+    matchingLoans.forEach(loan =>
+      loan.lenders.split(',').map(l => l.trim()).filter(Boolean).forEach(l => set.add(l))
+    );
+    return Array.from(set).sort();
+  }, [loans, filters.borrowers, filters.urgencies, filters.amountBuckets, filters.startDate, filters.endDate, allLenders]);
+
+  // Dependent filtering: available borrowers based on selected lenders, urgencies, and amount buckets
+  const availableBorrowers = useMemo(() => {
+    if (filters.lenders.length === 0 && filters.urgencies.length === 0 && filters.amountBuckets.length === 0 && !filters.startDate && !filters.endDate) return allBorrowers;
+    const matchingLoans = loans.filter(loan => {
+      const lenderMatch = filters.lenders.length === 0 ||
+        loan.lenders.split(',').map(l => l.trim())
+          .some(l => filters.lenders.includes(l));
+      const urgencyMatch = filters.urgencies.length === 0 ||
+        filters.urgencies.includes(loan.loan_urgency);
+      const amountMatch = filters.amountBuckets.length === 0 ||
+        filters.amountBuckets.some(label => {
+          const bucket = AMOUNT_BUCKETS.find(b => b.label === label);
+          return bucket
+            ? loan.loan_amount >= bucket.min && loan.loan_amount <= bucket.max
+            : false;
+        });
+      const dateMatch = (() => {
+        if (!filters.startDate && !filters.endDate) return true;
+        const loanDate = new Date(loan.record_date);
+        if (filters.startDate && loanDate < new Date(filters.startDate)) return false;
+        if (filters.endDate && loanDate > new Date(filters.endDate)) return false;
+        return true;
+      })();
+      return lenderMatch && urgencyMatch && amountMatch && dateMatch;
+    });
+    const set = new Set<string>();
+    matchingLoans.forEach(loan =>
+      loan.borrowers.split(',').map(b => b.trim()).filter(Boolean).forEach(b => set.add(b))
+    );
+    return Array.from(set).sort();
+  }, [loans, filters.lenders, filters.urgencies, filters.amountBuckets, filters.startDate, filters.endDate, allBorrowers]);
+
+  // Dependent filtering: available urgencies based on selected borrowers, lenders, and amount buckets
+  const availableUrgencies = useMemo(() => {
+    const urgencyOptions = ['critical', 'near-term', 'mid-term', 'long-term'];
+
+    // If no borrower, lender, or amount filters active, all urgencies available
+    if (filters.borrowers.length === 0 && filters.lenders.length === 0 && filters.amountBuckets.length === 0 && !filters.startDate && !filters.endDate) {
+      return urgencyOptions;
+    }
+
+    // Find loans matching active borrower, lender, and amount filters
+    const matchingLoans = loans.filter(loan => {
+      const borrowerMatch = filters.borrowers.length === 0 ||
+        loan.borrowers.split(',').map(b => b.trim())
+          .some(b => filters.borrowers.includes(b));
+      const lenderMatch = filters.lenders.length === 0 ||
+        loan.lenders.split(',').map(l => l.trim())
+          .some(l => filters.lenders.includes(l));
+      const amountMatch = filters.amountBuckets.length === 0 ||
+        filters.amountBuckets.some(label => {
+          const bucket = AMOUNT_BUCKETS.find(b => b.label === label);
+          return bucket
+            ? loan.loan_amount >= bucket.min && loan.loan_amount <= bucket.max
+            : false;
+        });
+      const dateMatch = (() => {
+        if (!filters.startDate && !filters.endDate) return true;
+        const loanDate = new Date(loan.record_date);
+        if (filters.startDate && loanDate < new Date(filters.startDate)) return false;
+        if (filters.endDate && loanDate > new Date(filters.endDate)) return false;
+        return true;
+      })();
+      return borrowerMatch && lenderMatch && amountMatch && dateMatch;
+    });
+
+    const set = new Set<string>();
+    matchingLoans.forEach(loan => set.add(loan.loan_urgency));
+
+    // Return in fixed order, only those present in matching loans
+    return urgencyOptions.filter(u => set.has(u));
+  }, [loans, filters.borrowers, filters.lenders, filters.amountBuckets, filters.startDate, filters.endDate]);
+
+  // Dependent filtering: available amount buckets based on selected borrowers, lenders, and urgencies
+  const availableAmountBuckets = useMemo(() => {
+    const matchingLoans = loans.filter(loan => {
+      const borrowerMatch = filters.borrowers.length === 0 ||
+        loan.borrowers.split(',').map(b => b.trim())
+          .some(b => filters.borrowers.includes(b));
+      const lenderMatch = filters.lenders.length === 0 ||
+        loan.lenders.split(',').map(l => l.trim())
+          .some(l => filters.lenders.includes(l));
+      const urgencyMatch = filters.urgencies.length === 0 ||
+        filters.urgencies.includes(loan.loan_urgency);
+      const dateMatch = (() => {
+        if (!filters.startDate && !filters.endDate) return true;
+        const loanDate = new Date(loan.record_date);
+        if (filters.startDate && loanDate < new Date(filters.startDate)) return false;
+        if (filters.endDate && loanDate > new Date(filters.endDate)) return false;
+        return true;
+      })();
+      return borrowerMatch && lenderMatch && urgencyMatch && dateMatch;
+    });
+
+    return AMOUNT_BUCKETS
+      .filter(bucket =>
+        matchingLoans.some(loan =>
+          loan.loan_amount >= bucket.min && loan.loan_amount <= bucket.max
+        )
+      )
+      .map(bucket => bucket.label);
+  }, [loans, filters.borrowers, filters.lenders, filters.urgencies, filters.startDate, filters.endDate]);
+
+  const handleChange = (key: keyof FilterState, value: string[] | string | number | null) => {
     onFilterChange({
       ...filters,
       [key]: value,
@@ -137,80 +512,152 @@ export default function FilterBar({ onFilterChange, filters }: FilterBarProps) {
         border: `1px solid ${colors.lightBlueTint}`,
       }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+        {/* Origination Date Filter */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flexShrink: 0 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            height: '20px'
+          }}>
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              color: '#5e7391',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              Origination Date
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <DateInput
+              value={filters.startDate}
+              onChange={(val) => handleChange('startDate', val)}
+              placeholder="Start date"
+            />
+            <span style={{
+              color: '#92a6c2',
+              fontSize: '12px',
+              fontWeight: 500,
+              flexShrink: 0,
+              paddingTop: '2px'
+            }}>
+              to
+            </span>
+            <DateInput
+              value={filters.endDate}
+              onChange={(val) => handleChange('endDate', val)}
+              placeholder="End date"
+            />
+          </div>
+        </div>
+
         {/* Borrower Filter */}
-        <div>
-          <input
-            type="text"
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '160px', flex: 1, flexShrink: 0 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            height: '20px'
+          }}>
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              color: '#5e7391',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              Borrower
+            </span>
+          </div>
+          <MultiSelectDropdown
+            options={availableBorrowers}
+            selected={filters.borrowers}
+            onChange={(val) => handleChange('borrowers', val)}
             placeholder="Filter by borrower"
-            value={filters.borrower}
-            onChange={(e) => handleChange('borrower', e.target.value)}
-            className="w-full px-4 py-2 rounded-md focus:outline-none transition-all"
-            style={inputStyles}
-            onFocus={(e) => {
-              e.target.style.borderColor = colors.accent;
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = colors.lightBlueTint;
-            }}
           />
         </div>
 
         {/* Lender Filter */}
-        <div>
-          <input
-            type="text"
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '160px', flex: 1, flexShrink: 0 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            height: '20px'
+          }}>
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              color: '#5e7391',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              Lender
+            </span>
+          </div>
+          <MultiSelectDropdown
+            options={availableLenders}
+            selected={filters.lenders}
+            onChange={(val) => handleChange('lenders', val)}
             placeholder="Filter by lender"
-            value={filters.lender}
-            onChange={(e) => handleChange('lender', e.target.value)}
-            className="w-full px-4 py-2 rounded-md focus:outline-none transition-all"
-            style={inputStyles}
-            onFocus={(e) => {
-              e.target.style.borderColor = colors.accent;
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = colors.lightBlueTint;
-            }}
           />
         </div>
 
         {/* Loan Amount Range */}
-        <div className="flex gap-2">
-          <input
-            type="number"
-            placeholder="Min $"
-            value={filters.minAmount ?? ''}
-            onChange={(e) => handleChange('minAmount', e.target.value ? parseFloat(e.target.value) : null)}
-            className="w-full px-4 py-2 rounded-md focus:outline-none transition-all"
-            style={inputStyles}
-            onFocus={(e) => {
-              e.target.style.borderColor = colors.accent;
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = colors.lightBlueTint;
-            }}
-          />
-          <input
-            type="number"
-            placeholder="Max $"
-            value={filters.maxAmount ?? ''}
-            onChange={(e) => handleChange('maxAmount', e.target.value ? parseFloat(e.target.value) : null)}
-            className="w-full px-4 py-2 rounded-md focus:outline-none transition-all"
-            style={inputStyles}
-            onFocus={(e) => {
-              e.target.style.borderColor = colors.accent;
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = colors.lightBlueTint;
-            }}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '160px', flex: 1, flexShrink: 0 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            height: '20px'
+          }}>
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              color: '#5e7391',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              Loan Amount
+            </span>
+          </div>
+          <MultiSelectDropdown
+            options={availableAmountBuckets}
+            selected={filters.amountBuckets}
+            onChange={(val) => handleChange('amountBuckets', val)}
+            placeholder="Filter by loan amount"
+            getLabel={(val) => val}
           />
         </div>
 
         {/* Urgency Filter */}
-        <div>
-          <UrgencyDropdown
-            value={filters.urgency}
-            onChange={(val) => handleChange('urgency', val)}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '160px', flex: 1, flexShrink: 0 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            height: '20px'
+          }}>
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              color: '#5e7391',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              Urgency
+            </span>
+            <Tooltip content={null} />
+          </div>
+          <MultiSelectDropdown
+            options={availableUrgencies}
+            selected={filters.urgencies}
+            onChange={(val) => handleChange('urgencies', val)}
+            placeholder="Filter by urgency"
+            getLabel={(val) => val.charAt(0).toUpperCase() + val.slice(1)}
           />
         </div>
       </div>
