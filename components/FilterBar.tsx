@@ -500,7 +500,7 @@ export default function FilterBar({ onFilterChange, filters, loans }: FilterBarP
 
   const inputStyles = {
     backgroundColor: colors.white,
-    border: `1px solid ${colors.lightBlueTint}`,
+    border: `1px solid ${colors.border}`,
     color: colors.primaryText,
   };
 
