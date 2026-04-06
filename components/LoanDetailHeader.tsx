@@ -1,69 +1,85 @@
 'use client';
 
 import Link from 'next/link';
-import { Playfair_Display } from 'next/font/google';
-import NavLogo from '@/components/NavLogo';
-
-const playfair = Playfair_Display({ subsets: ['latin'] });
 
 const colors = {
-  white: '#ffffff',
-  lightBlueTint: '#dae6f1',
-  primaryText: '#2b333f',
-  secondaryText: '#5e7391',
-  accent: '#f0c811',
+  navBg: '#123B56',
+  accentCyan: '#65CCE6',
+  white: '#FFFFFF',
+  black: '#000000',
 };
 
 export default function LoanDetailHeader() {
   return (
     <nav
       style={{
-        backgroundColor: colors.white,
-        borderBottom: `1px solid ${colors.lightBlueTint}`,
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+        backgroundColor: colors.navBg,
+        padding: '20px 0',
       }}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3">
-          <NavLogo />
-          <h1
-            className={`text-3xl font-bold ${playfair.className}`}
-            style={{ color: colors.primaryText }}
-          >
-            MatuReFi
-          </h1>
+      <div
+        className="max-w-7xl mx-auto px-6"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        {/* Left: MatuReFi wordmark */}
+        <Link
+          href="/"
+          style={{
+            fontWeight: 700,
+            fontSize: '30px',
+            color: colors.white,
+            textDecoration: 'none',
+          }}
+        >
+          MatuReFi
         </Link>
-        <div className="flex items-center gap-4">
-          <Link
-            href="/early-access"
-            className="text-base font-medium px-4 py-2 rounded-full transition-colors"
-            style={{
-              color: colors.primaryText,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = `${colors.accent}30`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            Early Access
-          </Link>
+
+        {/* Right: Navigation links */}
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           <Link
             href="/loans"
-            className="text-base font-medium px-4 py-2 rounded-full transition-colors flex items-center gap-2"
             style={{
-              color: colors.primaryText,
+              fontWeight: 400,
+              fontSize: '16px',
+              color: 'rgba(255,255,255,0.7)',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'color 0.2s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = `${colors.accent}30`;
+              e.currentTarget.style.color = 'rgba(255,255,255,1)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = 'rgba(255,255,255,0.7)';
             }}
           >
             <span>←</span>
             <span>Back to Loans</span>
+          </Link>
+
+          <Link
+            href="/early-access"
+            style={{
+              backgroundColor: colors.accentCyan,
+              borderRadius: '4px',
+              padding: '0px 32px',
+              height: '48px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 600,
+              fontSize: '16px',
+              color: colors.black,
+              textDecoration: 'none',
+            }}
+          >
+            Get early access ↗
           </Link>
         </div>
       </div>

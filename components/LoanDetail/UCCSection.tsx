@@ -8,14 +8,17 @@ interface UCCSectionProps {
 }
 
 const colors = {
-  background: '#f5fafc',
-  white: '#ffffff',
-  lightBlueTint: '#dae6f1',
-  primaryText: '#2b333f',
-  secondaryText: '#5e7391',
-  accent: '#f0c811',
-  midBlue: '#7cacdb',
-  footerText: '#92a6c2',
+  white: '#FFFFFF',
+  cardBorder: '#e2e8f0',
+  primaryText: '#262832',
+  secondaryText: '#585862',
+  innerCardBg: '#f8fafc',
+  sectionHeaderBg: '#123B56',
+  sectionHeaderText: '#FFFFFF',
+  accentCyan: '#65CCE6',
+  muted: '#94a3b8',
+  accordionHeaderBg: '#f8fafc',
+  accordionHoverBg: '#f0f4f8',
 };
 
 function getUrgencyBadgeStyle(urgency: string) {
@@ -23,11 +26,11 @@ function getUrgencyBadgeStyle(urgency: string) {
     case 'critical':
       return { backgroundColor: '#ef4444', color: '#ffffff' };
     case 'near-term':
-      return { backgroundColor: colors.accent, color: colors.primaryText };
+      return { backgroundColor: '#65CCE6', color: '#262832' };
     case 'mid-term':
-      return { backgroundColor: colors.midBlue, color: '#ffffff' };
+      return { backgroundColor: '#7cacdb', color: '#ffffff' };
     case 'long-term':
-      return { backgroundColor: colors.footerText, color: '#ffffff' };
+      return { backgroundColor: '#92a6c2', color: '#ffffff' };
     default:
       return { backgroundColor: '#94a3b8', color: '#ffffff' };
   }
@@ -61,19 +64,19 @@ function UCCAccordion({ borrower, filings }: { borrower: string; filings: UCCFil
     <div
       className="rounded-xl"
       style={{
-        backgroundColor: colors.white,
-        border: `1px solid ${colors.lightBlueTint}`,
+        backgroundColor: colors.accordionHeaderBg,
+        border: `1px solid ${colors.cardBorder}`,
       }}
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-6 py-4 flex items-center justify-between text-left transition-colors"
-        style={{ color: colors.primaryText }}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = colors.background)}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+        style={{ color: colors.primaryText, fontWeight: 500 }}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = colors.accordionHoverBg)}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = colors.accordionHeaderBg)}
       >
-        <span className="font-semibold">
-          {borrower} <span style={{ color: '#5e7391' }}>({filings.length})</span>
+        <span>
+          {borrower} <span style={{ color: colors.accentCyan }}>({filings.length})</span>
         </span>
         <span style={{ color: colors.secondaryText }}>{isOpen ? '▼' : '▶'}</span>
       </button>
@@ -85,15 +88,15 @@ function UCCAccordion({ borrower, filings }: { borrower: string; filings: UCCFil
               key={idx}
               className="rounded-lg p-4 space-y-3"
               style={{
-                backgroundColor: colors.background,
-                border: `1px solid ${colors.lightBlueTint}`,
+                backgroundColor: colors.white,
+                border: `1px solid ${colors.cardBorder}`,
               }}
             >
               <div className="flex gap-2">
                 <span
                   className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
                   style={{
-                    backgroundColor: filing.Status === 'Filed' ? '#22c55e' : colors.footerText,
+                    backgroundColor: filing.Status === 'Filed' ? '#22c55e' : '#94a3b8',
                     color: '#ffffff',
                   }}
                 >
@@ -164,8 +167,8 @@ function UCCAccordion({ borrower, filings }: { borrower: string; filings: UCCFil
                     <pre
                       className="text-xs p-3 rounded max-h-[150px] overflow-y-auto whitespace-pre-wrap"
                       style={{
-                        backgroundColor: colors.background,
-                        border: `1px solid ${colors.lightBlueTint}`,
+                        backgroundColor: colors.innerCardBg,
+                        border: `1px solid ${colors.cardBorder}`,
                         color: colors.secondaryText,
                       }}
                     >
@@ -178,7 +181,7 @@ function UCCAccordion({ borrower, filings }: { borrower: string; filings: UCCFil
                   <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
                     Collateral:
                   </div>
-                  <div className="italic" style={{ color: colors.footerText }}>
+                  <div className="italic" style={{ color: colors.muted }}>
                     Not extracted
                   </div>
                 </div>
@@ -194,19 +197,23 @@ function UCCAccordion({ borrower, filings }: { borrower: string; filings: UCCFil
 export default function UCCSection({ uccFilings }: UCCSectionProps) {
   return (
     <section
-      className="rounded-xl shadow-sm overflow-hidden"
+      className="shadow-sm overflow-hidden"
       style={{
         backgroundColor: colors.white,
-        border: `1px solid ${colors.lightBlueTint}`,
+        border: `1px solid ${colors.cardBorder}`,
+        borderRadius: '12px',
       }}
     >
       <h2
-        className="text-lg font-bold px-6 py-2"
+        className="px-6 py-2"
         style={{
-          color: colors.white,
-          backgroundColor: colors.primaryText,
-          borderTopLeftRadius: '0.75rem',
-          borderTopRightRadius: '0.75rem',
+          color: colors.sectionHeaderText,
+          backgroundColor: colors.sectionHeaderBg,
+          borderTopLeftRadius: '12px',
+          borderTopRightRadius: '12px',
+          borderLeft: `4px solid ${colors.accentCyan}`,
+          fontWeight: 600,
+          fontSize: '1.125rem',
         }}
       >
         UCC Filings

@@ -2,19 +2,13 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { Playfair_Display } from 'next/font/google';
-
-const playfair = Playfair_Display({ subsets: ['latin'] });
 
 const colors = {
-  background: '#f5fafc',
-  primaryText: '#2b333f',
-  secondaryText: '#5e7391',
-  accent: '#f0c811',
-  lightBlueTint: '#dae6f1',
-  white: '#ffffff',
-  placeholder: '#92a6c2',
-  error: '#ef4444',
+  heroBg: 'linear-gradient(328.46deg, #2781BC 3.13%, #123B56 43.55%)',
+  white: '#FFFFFF',
+  accentCyan: '#65CCE6',
+  primaryText: '#262832',
+  error: '#ff6b6b',
 };
 
 export default function LoginPage() {
@@ -52,77 +46,130 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center"
-      style={{ backgroundColor: colors.background }}
+      style={{
+        background: colors.heroBg,
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+      }}
     >
-      <div className="w-full max-w-md px-6">
-        {/* Wordmark and Subtitle */}
-        <Link href="/" className="block mb-8 text-center">
-          <h1
-            className={`text-5xl font-bold mb-2 ${playfair.className}`}
-            style={{ color: colors.primaryText }}
-          >
-            MatuReFi
-          </h1>
-          <p
-            className="text-sm"
-            style={{ color: colors.secondaryText }}
-          >
-            Distressed CRE Loan Intelligence
-          </p>
-        </Link>
-
-        {/* Login Card */}
-        <div
-          className="rounded-xl p-8 shadow-md"
+      {/* Wordmark and Subtitle */}
+      <Link
+        href="/"
+        style={{
+          textDecoration: 'none',
+          textAlign: 'center',
+        }}
+      >
+        <h1
           style={{
-            backgroundColor: colors.white,
-            border: `1px solid ${colors.lightBlueTint}`,
+            fontWeight: 700,
+            fontSize: '36px',
+            color: colors.white,
+            margin: 0,
           }}
         >
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all"
-                style={{
-                  backgroundColor: colors.white,
-                  border: `1px solid ${colors.lightBlueTint}`,
-                  color: colors.primaryText,
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = colors.accent;
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = colors.lightBlueTint;
-                }}
-                disabled={isLoading}
-                required
-              />
-            </div>
+          MatuReFi
+        </h1>
+        <p
+          style={{
+            fontWeight: 400,
+            fontSize: '16px',
+            color: 'rgba(255,255,255,0.6)',
+            marginTop: '8px',
+          }}
+        >
+          Distressed CRE Loan Intelligence
+        </p>
+      </Link>
 
-            {error && (
-              <div className="text-sm" style={{ color: colors.error }}>
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 rounded-lg font-bold transition-all hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed"
+      {/* Login Card */}
+      <div
+        style={{
+          marginTop: '32px',
+          background: 'rgba(255,255,255,0.08)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          borderRadius: '12px',
+          padding: '40px',
+          backdropFilter: 'blur(10px)',
+          maxWidth: '420px',
+          width: '100%',
+        }}
+      >
+        <form onSubmit={handleSubmit}>
+          <div>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
               style={{
-                backgroundColor: colors.accent,
-                color: colors.primaryText,
+                width: '100%',
+                padding: '12px 16px',
+                background: 'rgba(255,255,255,0.12)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '6px',
+                color: colors.white,
+                fontWeight: 400,
+                fontSize: '15px',
+                outline: 'none',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = colors.accentCyan;
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(255,255,255,0.2)';
+              }}
+              disabled={isLoading}
+              required
+            />
+          </div>
+
+          {error && (
+            <div
+              style={{
+                color: colors.error,
+                fontWeight: 400,
+                fontSize: '14px',
+                marginTop: '8px',
               }}
             >
-              {isLoading ? 'Entering...' : 'Enter'}
-            </button>
-          </form>
-        </div>
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            style={{
+              width: '100%',
+              height: '48px',
+              marginTop: error ? '16px' : '24px',
+              backgroundColor: colors.accentCyan,
+              color: colors.primaryText,
+              fontWeight: 600,
+              fontSize: '16px',
+              borderRadius: '4px',
+              border: 'none',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              opacity: isLoading ? 0.5 : 1,
+              transition: 'filter 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading) {
+                e.currentTarget.style.filter = 'brightness(0.9)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.filter = 'brightness(1)';
+            }}
+          >
+            {isLoading ? 'Entering...' : 'Enter'}
+          </button>
+        </form>
       </div>
     </div>
   );

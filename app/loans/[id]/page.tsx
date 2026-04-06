@@ -6,12 +6,14 @@ import MapSection from '@/components/LoanDetail/MapSection';
 import LoanDetailHeader from '@/components/LoanDetailHeader';
 
 const colors = {
-  background: '#f5fafc',
-  white: '#ffffff',
-  lightBlueTint: '#dae6f1',
-  primaryText: '#2b333f',
-  secondaryText: '#5e7391',
-  accent: '#f0c811',
+  background: '#FFFFFF',
+  white: '#FFFFFF',
+  cardBorder: '#e2e8f0',
+  primaryText: '#262832',
+  secondaryText: '#585862',
+  accentCyan: '#65CCE6',
+  sectionHeaderBg: '#123B56',
+  sectionHeaderText: '#FFFFFF',
   midBlue: '#7cacdb',
   footerText: '#92a6c2',
 };
@@ -30,11 +32,11 @@ function getUrgencyBadgeStyle(urgency: string) {
     case 'critical':
       return { backgroundColor: '#ef4444', color: '#ffffff' };
     case 'near-term':
-      return { backgroundColor: colors.accent, color: colors.primaryText };
+      return { backgroundColor: '#65CCE6', color: '#262832' };
     case 'mid-term':
-      return { backgroundColor: colors.midBlue, color: '#ffffff' };
+      return { backgroundColor: '#7cacdb', color: '#ffffff' };
     case 'long-term':
-      return { backgroundColor: colors.footerText, color: '#ffffff' };
+      return { backgroundColor: '#92a6c2', color: '#ffffff' };
     default:
       return { backgroundColor: '#94a3b8', color: '#ffffff' };
   }
@@ -64,19 +66,23 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
           {/* Left: Loan Overview (20% width) */}
           <section className="w-1/5 flex-shrink-0 flex flex-col">
             <div
-              className="rounded-xl shadow-sm flex-1 overflow-hidden"
+              className="shadow-sm flex-1 overflow-hidden"
               style={{
                 backgroundColor: colors.white,
-                border: `1px solid ${colors.lightBlueTint}`,
+                border: `1px solid ${colors.cardBorder}`,
+                borderRadius: '12px',
               }}
             >
               <h2
-                className="text-lg font-bold px-6 py-2"
+                className="px-6 py-2"
                 style={{
-                  color: colors.white,
-                  backgroundColor: colors.primaryText,
-                  borderTopLeftRadius: '0.75rem',
-                  borderTopRightRadius: '0.75rem',
+                  color: colors.sectionHeaderText,
+                  backgroundColor: colors.sectionHeaderBg,
+                  borderTopLeftRadius: '12px',
+                  borderTopRightRadius: '12px',
+                  borderLeft: `4px solid ${colors.accentCyan}`,
+                  fontWeight: 600,
+                  fontSize: '1.125rem',
                 }}
               >
                 Loan Overview
@@ -84,8 +90,8 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
               <div className="p-6 space-y-4">
               <div className="flex flex-col gap-2">
                 <div
-                  className="text-3xl font-bold"
-                  style={{ color: colors.primaryText }}
+                  className="text-3xl"
+                  style={{ color: colors.primaryText, fontWeight: 700 }}
                 >
                   {formatCurrency(loan.loan_amount)}
                 </div>
@@ -99,41 +105,41 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
 
               <div className="space-y-3 text-sm">
                 <div>
-                  <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                  <div className="text-xs mb-1" style={{ color: colors.secondaryText, fontWeight: 400 }}>
                     Doc Number
                   </div>
-                  <div style={{ color: colors.primaryText }}>{loan.doc_number}</div>
+                  <div style={{ color: colors.primaryText, fontWeight: 500 }}>{loan.doc_number}</div>
                 </div>
                 <div>
-                  <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                  <div className="text-xs mb-1" style={{ color: colors.secondaryText, fontWeight: 400 }}>
                     Origination Date
                   </div>
-                  <div style={{ color: colors.primaryText }}>{loan.record_date}</div>
+                  <div style={{ color: colors.primaryText, fontWeight: 500 }}>{loan.record_date}</div>
                 </div>
                 <div>
-                  <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                  <div className="text-xs mb-1" style={{ color: colors.secondaryText, fontWeight: 400 }}>
                     Doc Type
                   </div>
-                  <div style={{ color: colors.primaryText }}>{loan.doc_type}</div>
+                  <div style={{ color: colors.primaryText, fontWeight: 500 }}>{loan.doc_type}</div>
                 </div>
               </div>
 
               <div className="space-y-3 text-sm">
                 <div>
-                  <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                  <div className="text-xs mb-1" style={{ color: colors.secondaryText, fontWeight: 400 }}>
                     Borrower(s)
                   </div>
-                  <div className="space-y-1" style={{ color: colors.primaryText }}>
+                  <div className="space-y-1" style={{ color: colors.primaryText, fontWeight: 500 }}>
                     {borrowers.map((b, i) => (
                       <div key={i}>{b}</div>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                  <div className="text-xs mb-1" style={{ color: colors.secondaryText, fontWeight: 400 }}>
                     Lender(s)
                   </div>
-                  <div className="space-y-1" style={{ color: colors.primaryText }}>
+                  <div className="space-y-1" style={{ color: colors.primaryText, fontWeight: 500 }}>
                     {lenders.map((l, i) => (
                       <div key={i}>{l}</div>
                     ))}
@@ -143,18 +149,18 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
 
               <div className="space-y-3 text-sm">
                 <div>
-                  <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                  <div className="text-xs mb-1" style={{ color: colors.secondaryText, fontWeight: 400 }}>
                     Doc Stamps
                   </div>
-                  <div style={{ color: colors.primaryText }}>
+                  <div style={{ color: colors.primaryText, fontWeight: 500 }}>
                     {formatCurrency(loan.doc_stamps)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                  <div className="text-xs mb-1" style={{ color: colors.secondaryText, fontWeight: 400 }}>
                     Intangible Tax
                   </div>
-                  <div style={{ color: colors.primaryText }}>
+                  <div style={{ color: colors.primaryText, fontWeight: 500 }}>
                     {formatCurrency(loan.intangible_tax)}
                   </div>
                 </div>

@@ -9,12 +9,15 @@ interface ContactsSectionProps {
 }
 
 const colors = {
-  background: '#f5fafc',
-  white: '#ffffff',
-  lightBlueTint: '#dae6f1',
-  primaryText: '#2b333f',
-  secondaryText: '#5e7391',
-  footerText: '#92a6c2',
+  white: '#FFFFFF',
+  cardBorder: '#e2e8f0',
+  primaryText: '#262832',
+  secondaryText: '#585862',
+  innerCardBg: '#f8fafc',
+  sectionHeaderBg: '#123B56',
+  sectionHeaderText: '#FFFFFF',
+  accentCyan: '#65CCE6',
+  muted: '#94a3b8',
 };
 
 function formatPhoneNumber(number: string) {
@@ -55,19 +58,23 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
 
   return (
     <section
-      className="rounded-xl shadow-sm overflow-hidden"
+      className="shadow-sm overflow-hidden"
       style={{
         backgroundColor: colors.white,
-        border: `1px solid ${colors.lightBlueTint}`,
+        border: `1px solid ${colors.cardBorder}`,
+        borderRadius: '12px',
       }}
     >
       <h2
-        className="text-lg font-bold px-6 py-2"
+        className="px-6 py-2"
         style={{
-          color: colors.white,
-          backgroundColor: colors.primaryText,
-          borderTopLeftRadius: '0.75rem',
-          borderTopRightRadius: '0.75rem',
+          color: colors.sectionHeaderText,
+          backgroundColor: colors.sectionHeaderBg,
+          borderTopLeftRadius: '12px',
+          borderTopRightRadius: '12px',
+          borderLeft: `4px solid ${colors.accentCyan}`,
+          fontWeight: 600,
+          fontSize: '1.125rem',
         }}
       >
         Contacts
@@ -81,14 +88,14 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
               className="rounded-xl p-4"
               style={{
                 flex: 1,
-                backgroundColor: colors.background,
-                border: `1px solid ${colors.lightBlueTint}`,
+                backgroundColor: colors.innerCardBg,
+                border: `1px solid ${colors.cardBorder}`,
               }}
             >
-              <h3 className="text-base font-bold" style={{ color: colors.primaryText }}>
+              <h3 className="text-base" style={{ color: colors.primaryText, fontWeight: 600 }}>
                 Principals
               </h3>
-              <div className="text-xs italic mt-1" style={{ color: colors.footerText }}>
+              <div className="text-xs italic mt-1" style={{ color: colors.muted }}>
                 FL Division of Corporations · Public Record
               </div>
             </div>
@@ -97,14 +104,14 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
               className="rounded-xl p-4"
               style={{
                 flex: 1,
-                backgroundColor: colors.background,
-                border: `1px solid ${colors.lightBlueTint}`,
+                backgroundColor: colors.innerCardBg,
+                border: `1px solid ${colors.cardBorder}`,
               }}
             >
-              <h3 className="text-base font-bold" style={{ color: colors.primaryText }}>
+              <h3 className="text-base" style={{ color: colors.primaryText, fontWeight: 600 }}>
                 Contact Intelligence
               </h3>
-              <div className="text-xs italic mt-1" style={{ color: colors.footerText }}>
+              <div className="text-xs italic mt-1" style={{ color: colors.muted }}>
                 BatchSkipTracing · Algorithmically Matched
               </div>
             </div>
@@ -117,21 +124,21 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
               <div style={{ flex: 1 }}>
                 {principals[idx] ? (
                   <div
-                    className="rounded-xl p-6 space-y-3 shadow-sm"
+                    className="rounded-lg p-6 space-y-3"
                     style={{
                       backgroundColor: colors.white,
-                      border: `1px solid ${colors.lightBlueTint}`,
+                      border: `1px solid ${colors.cardBorder}`,
                       height: '100%',
                     }}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="font-semibold text-lg" style={{ color: colors.primaryText }}>
+                      <div className="text-lg" style={{ color: colors.primaryText, fontWeight: 600 }}>
                         {principals[idx][1].corporate_name ?? 'Unknown Entity'}
                       </div>
                       <span
                         className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
                         style={{
-                          backgroundColor: (principals[idx][1].status ?? 'Unknown') === 'Active' ? '#22c55e' : colors.footerText,
+                          backgroundColor: (principals[idx][1].status ?? 'Unknown') === 'Active' ? '#22c55e' : colors.muted,
                           color: '#ffffff',
                         }}
                       >
@@ -140,19 +147,19 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
                     </div>
 
                     <div className="text-sm">
-                      <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                      <div className="text-xs mb-1" style={{ color: colors.secondaryText, fontWeight: 400 }}>
                         Principal Address
                       </div>
-                      <div style={{ color: colors.primaryText }}>
+                      <div style={{ color: colors.primaryText, fontWeight: 500 }}>
                         {principals[idx][1].principal_address?.full_address ?? 'Address unavailable'}
                       </div>
                     </div>
 
                     <div className="text-sm">
-                      <div className="text-xs mb-2" style={{ color: colors.secondaryText }}>
+                      <div className="text-xs mb-2" style={{ color: colors.secondaryText, fontWeight: 400 }}>
                         Authorized Persons
                       </div>
-                      <div className="space-y-1" style={{ color: colors.primaryText }}>
+                      <div className="space-y-1" style={{ color: colors.primaryText, fontWeight: 500 }}>
                         {(principals[idx][1].authorized_persons ?? []).map((person, i) => (
                           <div key={i}>
                             {person.name} — {person.title}
@@ -170,30 +177,38 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
               <div style={{ flex: 1 }}>
                 {contacts[idx] ? (
                   <div
-                    className="rounded-xl p-6"
+                    className="rounded-lg p-6"
                     style={{
                       backgroundColor: colors.white,
-                      border: `1px solid ${colors.lightBlueTint}`,
+                      border: `1px solid ${colors.cardBorder}`,
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '16px',
                     }}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="font-semibold text-lg" style={{ color: colors.primaryText }}>
-                        {contacts[idx].owner_name?.first ?? ''} {contacts[idx].owner_name?.last ?? ''}
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <div className="text-lg" style={{ color: colors.primaryText, fontWeight: 600 }}>
+                          {contacts[idx].owner_name?.first ?? ''} {contacts[idx].owner_name?.last ?? ''}
+                        </div>
+                        {contacts[idx].dnc && (
+                          <span
+                            className="inline-block px-2.5 py-0.5 rounded-full text-xs"
+                            style={{
+                              backgroundColor: colors.accentCyan,
+                              color: colors.primaryText,
+                              fontWeight: 600,
+                            }}
+                          >
+                            DNC
+                          </span>
+                        )}
                       </div>
                       {contacts[idx].dnc && (
-                        <span
-                          className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
-                          style={{
-                            backgroundColor: '#f0c811',
-                            color: colors.primaryText,
-                          }}
-                        >
-                          DNC
-                        </span>
+                        <div className="text-xs mt-1" style={{ color: colors.secondaryText, fontWeight: 400 }}>
+                          DNC registered — verify compliance before outreach
+                        </div>
                       )}
                     </div>
 
@@ -202,9 +217,9 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
                         <button
                           onClick={() => toggleEmails(idx)}
                           className="flex items-center gap-2 text-xs mb-2 transition-colors"
-                          style={{ color: colors.secondaryText }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = colors.primaryText)}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = colors.secondaryText)}
+                          style={{ color: colors.accentCyan }}
+                          onMouseEnter={(e) => (e.currentTarget.style.color = colors.sectionHeaderBg)}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = colors.accentCyan)}
                         >
                           <span>{expandedEmails.has(idx) ? '▼' : '▶'}</span>
                           <span>Emails</span>
@@ -220,14 +235,14 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
                             <table className="w-full text-xs">
                               <thead
                                 style={{
-                                  backgroundColor: colors.lightBlueTint,
-                                  borderBottom: `1px solid ${colors.lightBlueTint}`,
+                                  backgroundColor: colors.innerCardBg,
+                                  borderBottom: `1px solid ${colors.cardBorder}`,
                                 }}
                               >
                                 <tr>
                                   <th
                                     className="px-3 py-2 text-left"
-                                    style={{ color: colors.primaryText }}
+                                    style={{ color: colors.primaryText, fontWeight: 600 }}
                                   >
                                     Email Address
                                   </th>
@@ -239,8 +254,8 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
                                     key={i}
                                     className="border-b"
                                     style={{
-                                      backgroundColor: i % 2 === 0 ? colors.white : colors.background,
-                                      borderColor: colors.lightBlueTint,
+                                      backgroundColor: i % 2 === 0 ? colors.white : colors.innerCardBg,
+                                      borderColor: colors.cardBorder,
                                       color: colors.primaryText,
                                     }}
                                   >
@@ -259,9 +274,9 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
                         <button
                           onClick={() => togglePhones(idx)}
                           className="flex items-center gap-2 text-xs mb-2 transition-colors"
-                          style={{ color: colors.secondaryText }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = colors.primaryText)}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = colors.secondaryText)}
+                          style={{ color: colors.accentCyan }}
+                          onMouseEnter={(e) => (e.currentTarget.style.color = colors.sectionHeaderBg)}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = colors.accentCyan)}
                         >
                           <span>{expandedPhones.has(idx) ? '▼' : '▶'}</span>
                           <span>Phone Numbers</span>
@@ -277,38 +292,38 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
                             <table className="w-full text-xs">
                               <thead
                                 style={{
-                                  backgroundColor: colors.lightBlueTint,
-                                  borderBottom: `1px solid ${colors.lightBlueTint}`,
+                                  backgroundColor: colors.innerCardBg,
+                                  borderBottom: `1px solid ${colors.cardBorder}`,
                                 }}
                               >
                                 <tr>
                                   <th
                                     className="px-3 py-2 text-left"
-                                    style={{ color: colors.primaryText }}
+                                    style={{ color: colors.primaryText, fontWeight: 600 }}
                                   >
                                     Number
                                   </th>
                                   <th
                                     className="px-3 py-2 text-left"
-                                    style={{ color: colors.primaryText }}
+                                    style={{ color: colors.primaryText, fontWeight: 600 }}
                                   >
                                     Type
                                   </th>
                                   <th
                                     className="px-3 py-2 text-left"
-                                    style={{ color: colors.primaryText }}
+                                    style={{ color: colors.primaryText, fontWeight: 600 }}
                                   >
                                     Carrier
                                   </th>
                                   <th
                                     className="px-3 py-2 text-left"
-                                    style={{ color: colors.primaryText }}
+                                    style={{ color: colors.primaryText, fontWeight: 600 }}
                                   >
                                     Score
                                   </th>
                                   <th
                                     className="px-3 py-2 text-left"
-                                    style={{ color: colors.primaryText }}
+                                    style={{ color: colors.primaryText, fontWeight: 600 }}
                                   >
                                     Reachable
                                   </th>
@@ -322,9 +337,9 @@ export default function ContactsSection({ sunbizData, skipTraceData }: ContactsS
                                       key={i}
                                       className="border-b"
                                       style={{
-                                        backgroundColor: i % 2 === 0 ? colors.white : colors.background,
-                                        borderColor: colors.lightBlueTint,
-                                        color: phone.reachable ? colors.primaryText : colors.footerText,
+                                        backgroundColor: i % 2 === 0 ? colors.white : colors.innerCardBg,
+                                        borderColor: colors.cardBorder,
+                                        color: phone.reachable ? colors.primaryText : colors.muted,
                                       }}
                                     >
                                       <td className="px-3 py-2">{formatPhoneNumber(phone.number)}</td>

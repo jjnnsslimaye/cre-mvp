@@ -3,7 +3,7 @@ import LoansPageClient from '@/components/LoansPageClient';
 import Navbar from '@/components/Navbar';
 
 const colors = {
-  background: '#f5fafc',
+  background: '#FFFFFF',
 };
 
 export default async function LoansPage() {

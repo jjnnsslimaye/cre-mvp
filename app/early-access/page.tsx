@@ -2,19 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Playfair_Display } from 'next/font/google';
-import NavLogo from '@/components/NavLogo';
-
-const playfair = Playfair_Display({ subsets: ['latin'] });
 
 const colors = {
-  background: '#f5fafc',
-  white: '#ffffff',
-  lightBlueTint: '#dae6f1',
-  primaryText: '#2b333f',
-  secondaryText: '#5e7391',
-  accent: '#f0c811',
-  footerText: '#92a6c2',
+  background: '#FFFFFF',
+  white: '#FFFFFF',
+  cardBorder: '#e2e8f0',
+  primaryText: '#262832',
+  secondaryText: '#585862',
+  accentCyan: '#65CCE6',
+  navBg: '#123B56',
+  placeholder: '#94a3b8',
   error: '#ef4444',
 };
 
@@ -69,24 +66,50 @@ export default function EarlyAccessPage() {
       {/* Header */}
       <nav
         style={{
-          backgroundColor: colors.white,
-          borderBottom: `1px solid ${colors.lightBlueTint}`,
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+          backgroundColor: colors.navBg,
+          padding: '20px 0',
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <NavLogo />
-            <h1 className={`text-3xl font-bold ${playfair.className}`} style={{ color: colors.primaryText }}>
-              MatuReFi
-            </h1>
-          </Link>
+        <div
+          className="max-w-7xl mx-auto px-6"
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          {/* Left: MatuReFi wordmark */}
           <Link
             href="/"
-            className="text-base font-medium px-4 py-2 rounded-full transition-colors flex items-center gap-2"
-            style={{ color: colors.secondaryText }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = colors.primaryText)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = colors.secondaryText)}
+            style={{
+              fontWeight: 700,
+              fontSize: '30px',
+              color: colors.white,
+              textDecoration: 'none',
+            }}
+          >
+            MatuReFi
+          </Link>
+
+          {/* Right: Back link */}
+          <Link
+            href="/"
+            style={{
+              fontWeight: 400,
+              fontSize: '16px',
+              color: 'rgba(255,255,255,0.7)',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'rgba(255,255,255,1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'rgba(255,255,255,0.7)';
+            }}
           >
             <span>←</span>
             <span>Back</span>
@@ -97,27 +120,38 @@ export default function EarlyAccessPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12 flex justify-center">
         <div
-          className="rounded-xl shadow-sm"
           style={{
             backgroundColor: colors.white,
-            border: `1px solid ${colors.lightBlueTint}`,
+            border: `1px solid ${colors.cardBorder}`,
+            borderRadius: '12px',
+            boxShadow: '0px 4px 20px rgba(0, 66, 110, 0.08)',
             maxWidth: '560px',
             width: '100%',
             padding: '40px',
           }}
         >
           <div
-            className="text-xl font-bold mb-2 pb-3"
             style={{
+              fontSize: '22px',
+              fontWeight: 700,
               color: colors.primaryText,
-              borderLeft: `4px solid #1c71af`,
+              borderLeft: `4px solid ${colors.accentCyan}`,
               paddingLeft: '16px',
+              marginBottom: '8px',
             }}
           >
             Request Early Access
           </div>
 
-          <div className="text-sm mb-6" style={{ color: colors.secondaryText, paddingLeft: '20px' }}>
+          <div
+            style={{
+              fontSize: '14px',
+              fontWeight: 400,
+              color: colors.secondaryText,
+              marginBottom: '24px',
+              paddingLeft: '20px',
+            }}
+          >
             MatuReFi is currently in private beta. Join the waitlist to be notified when access opens.
           </div>
 
@@ -131,7 +165,14 @@ export default function EarlyAccessPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: colors.primaryText }}>
+                <label
+                  className="block mb-2"
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: colors.primaryText,
+                  }}
+                >
                   Full Name <span style={{ color: colors.error }}>*</span>
                 </label>
                 <input
@@ -140,17 +181,31 @@ export default function EarlyAccessPage() {
                   required
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-lg"
+                  className="w-full"
                   style={{
                     backgroundColor: colors.white,
-                    border: `1px solid ${colors.lightBlueTint}`,
+                    border: `1px solid ${colors.cardBorder}`,
+                    borderRadius: '6px',
+                    padding: '10px 14px',
+                    fontSize: '15px',
+                    fontWeight: 400,
                     color: colors.primaryText,
+                    outline: 'none',
                   }}
+                  onFocus={(e) => (e.target.style.borderColor = colors.accentCyan)}
+                  onBlur={(e) => (e.target.style.borderColor = colors.cardBorder)}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: colors.primaryText }}>
+                <label
+                  className="block mb-2"
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: colors.primaryText,
+                  }}
+                >
                   Email Address <span style={{ color: colors.error }}>*</span>
                 </label>
                 <input
@@ -159,17 +214,31 @@ export default function EarlyAccessPage() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-lg"
+                  className="w-full"
                   style={{
                     backgroundColor: colors.white,
-                    border: `1px solid ${colors.lightBlueTint}`,
+                    border: `1px solid ${colors.cardBorder}`,
+                    borderRadius: '6px',
+                    padding: '10px 14px',
+                    fontSize: '15px',
+                    fontWeight: 400,
                     color: colors.primaryText,
+                    outline: 'none',
                   }}
+                  onFocus={(e) => (e.target.style.borderColor = colors.accentCyan)}
+                  onBlur={(e) => (e.target.style.borderColor = colors.cardBorder)}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: colors.primaryText }}>
+                <label
+                  className="block mb-2"
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: colors.primaryText,
+                  }}
+                >
                   Company
                 </label>
                 <input
@@ -178,17 +247,31 @@ export default function EarlyAccessPage() {
                   placeholder="Your firm or company"
                   value={formData.company}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-lg"
+                  className="w-full"
                   style={{
                     backgroundColor: colors.white,
-                    border: `1px solid ${colors.lightBlueTint}`,
+                    border: `1px solid ${colors.cardBorder}`,
+                    borderRadius: '6px',
+                    padding: '10px 14px',
+                    fontSize: '15px',
+                    fontWeight: 400,
                     color: colors.primaryText,
+                    outline: 'none',
                   }}
+                  onFocus={(e) => (e.target.style.borderColor = colors.accentCyan)}
+                  onBlur={(e) => (e.target.style.borderColor = colors.cardBorder)}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: colors.primaryText }}>
+                <label
+                  className="block mb-2"
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: colors.primaryText,
+                  }}
+                >
                   Message
                 </label>
                 <textarea
@@ -197,23 +280,35 @@ export default function EarlyAccessPage() {
                   placeholder="Tell us about your use case"
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-lg"
+                  className="w-full"
                   style={{
                     backgroundColor: colors.white,
-                    border: `1px solid ${colors.lightBlueTint}`,
+                    border: `1px solid ${colors.cardBorder}`,
+                    borderRadius: '6px',
+                    padding: '10px 14px',
+                    fontSize: '15px',
+                    fontWeight: 400,
                     color: colors.primaryText,
+                    outline: 'none',
                     resize: 'vertical',
                   }}
+                  onFocus={(e) => (e.target.style.borderColor = colors.accentCyan)}
+                  onBlur={(e) => (e.target.style.borderColor = colors.cardBorder)}
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="w-full py-3 rounded-lg font-bold transition-all"
+                className="w-full transition-all"
                 style={{
-                  backgroundColor: colors.accent,
+                  backgroundColor: colors.accentCyan,
                   color: colors.primaryText,
+                  borderRadius: '6px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  border: 'none',
                   opacity: status === 'loading' ? 0.7 : 1,
                   cursor: status === 'loading' ? 'not-allowed' : 'pointer',
                 }}
