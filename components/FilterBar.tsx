@@ -21,11 +21,11 @@ interface FilterBarProps {
 
 const colors = {
   white: '#ffffff',
-  lightBlueTint: '#dae6f1',
+  border: '#e2e8f0',
   primaryText: '#2b333f',
   placeholder: '#92a6c2',
-  accent: '#f0c811',
-  background: '#f5fafc',
+  accentCyan: '#65CCE6',
+  navBg: '#123B56',
   secondaryText: '#5e7391',
 };
 
@@ -65,7 +65,7 @@ function Tooltip({ content }: { content: React.ReactNode }) {
           color: '#ffffff',
           borderRadius: '8px',
           padding: '12px 16px',
-          width: '260px',
+          width: '320px',
           zIndex: 200,
           boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
           fontSize: '12px',
@@ -117,7 +117,7 @@ function DateInput({
         flexShrink: 0,
         padding: '8px 16px',
         backgroundColor: '#ffffff',
-        border: `1px solid ${value ? '#1c71af' : '#dae6f1'}`,
+        border: `1px solid ${value ? '#123B56' : '#e2e8f0'}`,
         borderRadius: '8px',
         color: value ? '#2b333f' : '#92a6c2',
         fontFamily: 'inherit',
@@ -125,8 +125,8 @@ function DateInput({
         outline: 'none',
         cursor: 'pointer',
       }}
-      onFocus={e => e.target.style.borderColor = '#f0c811'}
-      onBlur={e => e.target.style.borderColor = value ? '#1c71af' : '#dae6f1'}
+      onFocus={e => e.target.style.borderColor = '#65CCE6'}
+      onBlur={e => e.target.style.borderColor = value ? '#123B56' : '#e2e8f0'}
     />
   );
 }
@@ -194,7 +194,7 @@ function MultiSelectDropdown({
           width: '100%',
           padding: '8px 16px',
           backgroundColor: '#ffffff',
-          border: `1px solid ${selected.length > 0 ? '#1c71af' : '#dae6f1'}`,
+          border: `1px solid ${selected.length > 0 ? '#123B56' : '#e2e8f0'}`,
           borderRadius: '8px',
           color: selected.length > 0 ? '#2b333f' : '#92a6c2',
           textAlign: 'left',
@@ -226,7 +226,7 @@ function MultiSelectDropdown({
           left: 0,
           right: 0,
           backgroundColor: '#ffffff',
-          border: '1px solid #dae6f1',
+          border: '1px solid #e2e8f0',
           borderRadius: '8px',
           marginTop: '4px',
           zIndex: 100,
@@ -244,7 +244,7 @@ function MultiSelectDropdown({
                 color: '#1c71af',
                 fontSize: '12px',
                 fontWeight: 600,
-                borderBottom: '1px solid #dae6f1',
+                borderBottom: '1px solid #e2e8f0',
                 backgroundColor: '#f5fafc',
               }}
             >
@@ -264,7 +264,7 @@ function MultiSelectDropdown({
               width: '100%',
               padding: '8px 16px',
               border: 'none',
-              borderBottom: '1px solid #dae6f1',
+              borderBottom: '1px solid #e2e8f0',
               outline: 'none',
               fontFamily: 'inherit',
               fontSize: '13px',
@@ -302,8 +302,8 @@ function MultiSelectDropdown({
                 width: '16px',
                 height: '16px',
                 borderRadius: '4px',
-                border: `2px solid ${selected.includes(option) ? '#1c71af' : '#dae6f1'}`,
-                backgroundColor: selected.includes(option) ? '#1c71af' : '#ffffff',
+                border: `2px solid ${selected.includes(option) ? '#123B56' : '#e2e8f0'}`,
+                backgroundColor: selected.includes(option) ? '#123B56' : '#ffffff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -509,7 +509,7 @@ export default function FilterBar({ onFilterChange, filters, loans }: FilterBarP
       className="rounded-xl p-6 mb-6 shadow-sm"
       style={{
         backgroundColor: colors.white,
-        border: `1px solid ${colors.lightBlueTint}`,
+        border: `1px solid ${colors.border}`,
       }}
     >
       <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
@@ -524,7 +524,7 @@ export default function FilterBar({ onFilterChange, filters, loans }: FilterBarP
             <span style={{
               fontSize: '11px',
               fontWeight: 600,
-              color: '#5e7391',
+              color: '#123B56',
               textTransform: 'uppercase',
               letterSpacing: '0.05em'
             }}>
@@ -565,7 +565,7 @@ export default function FilterBar({ onFilterChange, filters, loans }: FilterBarP
             <span style={{
               fontSize: '11px',
               fontWeight: 600,
-              color: '#5e7391',
+              color: '#123B56',
               textTransform: 'uppercase',
               letterSpacing: '0.05em'
             }}>
@@ -591,7 +591,7 @@ export default function FilterBar({ onFilterChange, filters, loans }: FilterBarP
             <span style={{
               fontSize: '11px',
               fontWeight: 600,
-              color: '#5e7391',
+              color: '#123B56',
               textTransform: 'uppercase',
               letterSpacing: '0.05em'
             }}>
@@ -617,7 +617,7 @@ export default function FilterBar({ onFilterChange, filters, loans }: FilterBarP
             <span style={{
               fontSize: '11px',
               fontWeight: 600,
-              color: '#5e7391',
+              color: '#123B56',
               textTransform: 'uppercase',
               letterSpacing: '0.05em'
             }}>
@@ -644,7 +644,7 @@ export default function FilterBar({ onFilterChange, filters, loans }: FilterBarP
             <span style={{
               fontSize: '11px',
               fontWeight: 600,
-              color: '#5e7391',
+              color: '#123B56',
               textTransform: 'uppercase',
               letterSpacing: '0.05em'
             }}>

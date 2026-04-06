@@ -5,6 +5,8 @@ import Link from 'next/link';
 import type { Loan } from '@/lib/types';
 import type { FilterState } from './FilterBar';
 import { AMOUNT_BUCKETS } from '@/lib/constants';
+import { getEnrichmentScore } from '@/lib/enrichment';
+import EnrichmentBadge from '@/components/EnrichmentBadge';
 
 interface LoanTableProps {
   loans: Loan[];
@@ -172,7 +174,7 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
       case 'critical':
         return { backgroundColor: '#ef4444', color: '#ffffff' };
       case 'near-term':
-        return { backgroundColor: colors.accent, color: colors.primaryText };
+        return { backgroundColor: '#65CCE6', color: '#262832' };
       case 'mid-term':
         return { backgroundColor: colors.midBlue, color: '#ffffff' };
       case 'long-term':
@@ -211,7 +213,7 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
   return (
     <div>
       {/* Count */}
-      <div className="mb-4 text-sm" style={{ color: colors.secondaryText }}>
+      <div className="mb-4 text-sm" style={{ color: '#585862' }}>
         Showing {sortedLoans.length} of {loans.length} loans
       </div>
 
@@ -236,6 +238,12 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
                 <SortableHeader field="borrowers">Borrower(s)</SortableHeader>
                 <SortableHeader field="lenders">Lender(s)</SortableHeader>
                 <SortableHeader field="loan_amount">Loan Amount</SortableHeader>
+                <th
+                  className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap"
+                  style={{ color: colors.white, width: '110px' }}
+                >
+                  Enrichment
+                </th>
                 <SortableHeader field="loan_urgency">Urgency</SortableHeader>
               </tr>
             </thead>
@@ -243,7 +251,7 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
               {sortedLoans.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={6}
                     className="px-6 py-8 text-center text-sm"
                     style={{ color: colors.secondaryText }}
                   >
@@ -301,6 +309,9 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
                       >
                         {formatCurrency(loan.loan_amount)}
                       </Link>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <EnrichmentBadge score={getEnrichmentScore(loan)} />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <Link
