@@ -121,7 +121,7 @@ export default function Home() {
             <p
               style={{
                 fontWeight: 400,
-                fontSize: '17px',
+                fontSize: '18px',
                 color: colors.white,
                 lineHeight: '120%',
                 marginTop: '14px',
@@ -144,7 +144,7 @@ export default function Home() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span style={{ fontWeight: 400, fontSize: '20px', color: colors.white }}>
+                <span style={{ fontWeight: 400, fontSize: '16px', color: colors.white }}>
                   Only pay when you do deals
                 </span>
               </div>
@@ -161,7 +161,7 @@ export default function Home() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span style={{ fontWeight: 400, fontSize: '20px', color: colors.white }}>
+                <span style={{ fontWeight: 400, fontSize: '16px', color: colors.white }}>
                   Loans ranked by urgency signal
                 </span>
               </div>
@@ -178,7 +178,7 @@ export default function Home() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span style={{ fontWeight: 400, fontSize: '20px', color: colors.white }}>
+                <span style={{ fontWeight: 400, fontSize: '16px', color: colors.white }}>
                   Backed by UCC filings & county records
                 </span>
               </div>
@@ -313,7 +313,7 @@ export default function Home() {
           }}
         >
           <span style={{ color: colors.primaryText }}>
-            $167B+ of CRE loans will mature in 2026.
+            $875B+ of CRE loans will mature in 2026.
           </span>
           <br />
           <span style={{ color: colors.accentCyan }}>
