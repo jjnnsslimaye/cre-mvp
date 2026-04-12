@@ -197,7 +197,7 @@ export default function Home() {
             >
               {/* Layer 1 — Loan Overview (back, left, slightly down) */}
               <Image
-                src="/screenshots/heropage-loan-details.png"
+                src="/screenshots/heropage-loan-details-BLUR.jpeg"
                 alt="Loan overview"
                 width={213}
                 height={380}
@@ -213,7 +213,7 @@ export default function Home() {
 
               {/* Layer 2 — Skip Trace card (middle, right of loan card, overlapping) */}
               <Image
-                src="/screenshots/heropage-skiptrace.png"
+                src="/screenshots/heropage-skiptrace-BLUR.jpeg"
                 alt="Contact intelligence"
                 width={400}
                 height={323}
@@ -229,7 +229,7 @@ export default function Home() {
 
               {/* Layer 3 — Phone row closeup (front, overlapping bottom of skiptrace) */}
               <Image
-                src="/screenshots/heropage-phone.png"
+                src="/screenshots/heropage-phone-BLUR.jpeg"
                 alt="Phone number detail"
                 width={350}
                 height={80}
@@ -377,7 +377,7 @@ export default function Home() {
             >
               {/* Layer 1 — Loan table (back, top-right, larger) */}
               <Image
-                src="/screenshots/feature1-loan-table.png"
+                src="/screenshots/feature1-loan-table-BLUR.jpeg"
                 alt="Loan table with filters"
                 width={800}
                 height={400}
@@ -469,7 +469,7 @@ export default function Home() {
             >
               {/* Layer 1 — Map (back, largest, top-left) */}
               <Image
-                src="/screenshots/feature2-map.png"
+                src="/screenshots/feature2-map-BLUR.jpeg"
                 alt="Property map with location"
                 width={800}
                 height={400}
@@ -487,7 +487,7 @@ export default function Home() {
 
               {/* Layer 2 — Contacts (middle, bottom-right) */}
               <Image
-                src="/screenshots/feature2-contacts.png"
+                src="/screenshots/feature2-contacts-BLUR.jpeg"
                 alt="Contact information"
                 width={800}
                 height={400}
@@ -505,7 +505,7 @@ export default function Home() {
 
               {/* Layer 3 — UCC (front, center-left, straddling layers 1 and 2) */}
               <Image
-                src="/screenshots/feature2-ucc.png"
+                src="/screenshots/feature2-ucc-BLUR.jpeg"
                 alt="UCC filings detail"
                 width={800}
                 height={400}
@@ -579,7 +579,7 @@ export default function Home() {
             >
               {/* Layer 1 — Loan Overview (back, left, slightly down) */}
               <Image
-                src="/screenshots/heropage-loan-details.png"
+                src="/screenshots/heropage-loan-details-BLUR.jpeg"
                 alt="Loan overview"
                 width={192}
                 height={342}
@@ -595,7 +595,7 @@ export default function Home() {
 
               {/* Layer 2 — Skip Trace card (middle, right of loan card, overlapping) */}
               <Image
-                src="/screenshots/heropage-skiptrace.png"
+                src="/screenshots/heropage-skiptrace-BLUR.jpeg"
                 alt="Contact intelligence"
                 width={360}
                 height={291}
@@ -611,7 +611,7 @@ export default function Home() {
 
               {/* Layer 3 — Phone row closeup (front, overlapping bottom of skiptrace) */}
               <Image
-                src="/screenshots/heropage-phone.png"
+                src="/screenshots/heropage-phone-BLUR.jpeg"
                 alt="Phone number detail"
                 width={315}
                 height={72}
