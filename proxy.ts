@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getTierFromPassword } from './lib/tiers';
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -11,10 +12,17 @@ export function proxy(request: NextRequest) {
 
   // Check for authentication cookie
   const authCookie = request.cookies.get('maturefi_auth');
-  const expectedPassword = process.env.DEMO_PASSWORD;
 
-  if (!authCookie || authCookie.value !== expectedPassword) {
-    // Redirect to login if not authenticated
+  if (!authCookie) {
+    // Redirect to login if no auth cookie
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  // Validate password against tier system
+  const tier = getTierFromPassword(authCookie.value);
+
+  if (!tier) {
+    // Redirect to login if password doesn't match any tier
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
