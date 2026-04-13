@@ -1,6 +1,25 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getTierFromPassword } from './lib/tiers';
+
+const TIER_ENV_VARS = [
+  'DEMO_PASSWORD_10',
+  'DEMO_PASSWORD_20',
+  'DEMO_PASSWORD_30',
+  'DEMO_PASSWORD_40',
+  'DEMO_PASSWORD_50',
+  'DEMO_PASSWORD_60',
+  'DEMO_PASSWORD_70',
+  'DEMO_PASSWORD_80',
+  'DEMO_PASSWORD_90',
+  'DEMO_PASSWORD_100',
+];
+
+function isValidPassword(password: string): boolean {
+  return TIER_ENV_VARS.some(envVar => {
+    const envPassword = process.env[envVar];
+    return envPassword && password === envPassword;
+  });
+}
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -19,9 +38,7 @@ export function proxy(request: NextRequest) {
   }
 
   // Validate password against tier system
-  const tier = getTierFromPassword(authCookie.value);
-
-  if (!tier) {
+  if (!isValidPassword(authCookie.value)) {
     // Redirect to login if password doesn't match any tier
     return NextResponse.redirect(new URL('/login', request.url));
   }

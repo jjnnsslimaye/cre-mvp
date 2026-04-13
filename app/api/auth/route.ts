@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getTierFromPassword, TIERS } from '../../../lib/tiers';
+import { getTierFromPassword, TIERS } from '@/lib/tiers';
 
 export async function POST(request: Request) {
   const body = await request.json();
