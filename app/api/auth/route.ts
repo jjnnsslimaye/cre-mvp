@@ -1,35 +1,39 @@
 import { NextResponse } from 'next/server';
-import { getTierFromPassword, TIERS } from '@/lib/tiers';
+
+const TIER_PASSWORDS: Record<string, number> = {
+  [process.env.DEMO_PASSWORD_10 ?? '__invalid_10__']: 10,
+  [process.env.DEMO_PASSWORD_20 ?? '__invalid_20__']: 20,
+  [process.env.DEMO_PASSWORD_30 ?? '__invalid_30__']: 30,
+  [process.env.DEMO_PASSWORD_40 ?? '__invalid_40__']: 40,
+  [process.env.DEMO_PASSWORD_50 ?? '__invalid_50__']: 50,
+  [process.env.DEMO_PASSWORD_60 ?? '__invalid_60__']: 60,
+  [process.env.DEMO_PASSWORD_70 ?? '__invalid_70__']: 70,
+  [process.env.DEMO_PASSWORD_80 ?? '__invalid_80__']: 80,
+  [process.env.DEMO_PASSWORD_90 ?? '__invalid_90__']: 90,
+  [process.env.DEMO_PASSWORD_100 ?? '__invalid_100__']: 100,
+};
 
 export async function POST(request: Request) {
   const body = await request.json();
   const { password } = body;
 
-  console.log('Auth attempt received');
-  console.log('Password received length:', password?.length);
-  console.log('DEMO_PASSWORD_10 exists:', !!process.env.DEMO_PASSWORD_10);
-  console.log('DEMO_PASSWORD_10 length:', process.env.DEMO_PASSWORD_10?.length);
-  console.log('TIERS count:', TIERS.length);
+  const tierPct = TIER_PASSWORDS[password];
 
-  const tier = getTierFromPassword(password);
-
-  if (tier) {
-    const response = NextResponse.json({ success: true, tier: tier.pct }, { status: 200 });
-
-    // Set authentication cookie
+  if (tierPct !== undefined) {
+    const response = NextResponse.json(
+      { success: true, tier: tierPct },
+      { status: 200 }
+    );
     response.cookies.set('maturefi_auth', password, {
       httpOnly: false,
       path: '/',
-      maxAge: 604800, // 7 days
+      maxAge: 604800,
     });
-
-    // Set tier cookie
-    response.cookies.set('maturefi_tier', String(tier.pct), {
+    response.cookies.set('maturefi_tier', String(tierPct), {
       httpOnly: false,
       path: '/',
-      maxAge: 604800, // 7 days
+      maxAge: 604800,
     });
-
     return response;
   }
 
