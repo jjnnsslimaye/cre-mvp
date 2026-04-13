@@ -1,27 +1,40 @@
 import { NextResponse } from 'next/server';
 
-const TIER_PASSWORDS: Record<string, number> = {
-  [process.env.DEMO_PASSWORD_10 ?? '__invalid_10__']: 10,
-  [process.env.DEMO_PASSWORD_20 ?? '__invalid_20__']: 20,
-  [process.env.DEMO_PASSWORD_30 ?? '__invalid_30__']: 30,
-  [process.env.DEMO_PASSWORD_40 ?? '__invalid_40__']: 40,
-  [process.env.DEMO_PASSWORD_50 ?? '__invalid_50__']: 50,
-  [process.env.DEMO_PASSWORD_60 ?? '__invalid_60__']: 60,
-  [process.env.DEMO_PASSWORD_70 ?? '__invalid_70__']: 70,
-  [process.env.DEMO_PASSWORD_80 ?? '__invalid_80__']: 80,
-  [process.env.DEMO_PASSWORD_90 ?? '__invalid_90__']: 90,
-  [process.env.DEMO_PASSWORD_100 ?? '__invalid_100__']: 100,
+const TIER_ENV_VARS: Record<string, number> = {
+  DEMO_PASSWORD_10: 10,
+  DEMO_PASSWORD_20: 20,
+  DEMO_PASSWORD_30: 30,
+  DEMO_PASSWORD_40: 40,
+  DEMO_PASSWORD_50: 50,
+  DEMO_PASSWORD_60: 60,
+  DEMO_PASSWORD_70: 70,
+  DEMO_PASSWORD_80: 80,
+  DEMO_PASSWORD_90: 90,
+  DEMO_PASSWORD_100: 100,
 };
 
 export async function POST(request: Request) {
   const body = await request.json();
   const { password } = body;
 
-  const tierPct = TIER_PASSWORDS[password];
+  console.log('Auth attempt, password length:', password?.length);
 
-  if (tierPct !== undefined) {
+  let matchedTier: number | null = null;
+
+  for (const [envVar, pct] of Object.entries(TIER_ENV_VARS)) {
+    const envValue = process.env[envVar];
+    console.log(`Checking ${envVar}: exists=${!!envValue}`);
+    if (envValue && password === envValue) {
+      matchedTier = pct;
+      break;
+    }
+  }
+
+  console.log('Matched tier:', matchedTier);
+
+  if (matchedTier !== null) {
     const response = NextResponse.json(
-      { success: true, tier: tierPct },
+      { success: true, tier: matchedTier },
       { status: 200 }
     );
     response.cookies.set('maturefi_auth', password, {
@@ -29,7 +42,7 @@ export async function POST(request: Request) {
       path: '/',
       maxAge: 604800,
     });
-    response.cookies.set('maturefi_tier', String(tierPct), {
+    response.cookies.set('maturefi_tier', String(matchedTier), {
       httpOnly: false,
       path: '/',
       maxAge: 604800,
