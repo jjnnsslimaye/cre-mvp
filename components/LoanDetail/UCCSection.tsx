@@ -43,13 +43,17 @@ export default function UCCSection({ uccFilings }: UCCSectionProps) {
   const [reasonsOpen, setReasonsOpen] = useState(false);
 
   // Flatten all filings from all borrowers
-  const allFilings = Object.entries(uccFilings).flatMap(
-    ([borrowerName, filings]) =>
-      filings.map(filing => ({ ...filing, borrowerName }))
-  );
+  const allFilings: (UCCFiling & { borrowerName: string })[] =
+    Object.entries(uccFilings).flatMap(
+      ([borrowerName, filings]) =>
+        filings.map(filing => ({
+          ...filing,
+          borrowerName
+        } as UCCFiling & { borrowerName: string }))
+    );
 
   // Find primary match or fallback to first filing
-  const primaryFiling: (UCCFiling & { borrowerName: string }) | undefined =
+  const primaryFiling =
     allFilings.find(f => f.is_primary_match === true) ?? allFilings[0];
 
   return (
