@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { getLoanById } from '@/lib/loadData';
 import UCCSection from '@/components/LoanDetail/UCCSection';
 import ContactsSection from '@/components/LoanDetail/ContactsSection';
@@ -44,7 +45,10 @@ function getUrgencyBadgeStyle(urgency: string) {
 
 export default async function LoanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const loan = await getLoanById(id);
+  const cookieStore = await cookies();
+  const tierPct = parseInt(cookieStore.get('maturefi_tier')?.value ?? '100');
+
+  const loan = await getLoanById(id, tierPct);
 
   if (!loan) {
     notFound();

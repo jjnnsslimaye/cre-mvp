@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 import { getLoans } from '@/lib/loadData';
 import LoansPageClient from '@/components/LoansPageClient';
 import Navbar from '@/components/Navbar';
@@ -7,7 +8,13 @@ const colors = {
 };
 
 export default async function LoansPage() {
-  const loans = await getLoans();
+  const cookieStore = await cookies();
+  const tierCookie = cookieStore.get('maturefi_tier');
+  console.log('maturefi_tier cookie:', tierCookie);
+  const tierPct = parseInt(tierCookie?.value ?? '100');
+  console.log('tierPct parsed as:', tierPct);
+  const loans = await getLoans(tierPct);
+  console.log('loans loaded:', loans.length);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: colors.background }}>

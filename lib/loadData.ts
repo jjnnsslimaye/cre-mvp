@@ -1,9 +1,10 @@
 import 'server-only';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import type { Loan } from '@/lib/types';
+import { TIERS } from '@/lib/tiers';
 
-// Module-level cache
-let cache: Loan[] | null = null;
+// Per-tier cache
+const tierCache = new Map<number, Loan[]>();
 
 // Initialize S3 client
 const s3Client = new S3Client({
@@ -16,23 +17,34 @@ const s3Client = new S3Client({
 
 const bucketName = process.env.S3_BUCKET!;
 
-export async function getLoans(): Promise<Loan[]> {
-  // Return cache if available
-  if (cache !== null) {
-    return cache;
+export async function getLoans(pct: number): Promise<Loan[]> {
+  console.log('getLoans called with pct:', pct);
+  console.log('tierCache has pct?', tierCache.has(pct));
+
+  // Return cache if available for this tier
+  if (tierCache.has(pct)) {
+    return tierCache.get(pct)!;
   }
 
-  // Fetch the single file
+  // Find the matching tier
+  const tier = TIERS.find(t => t.pct === pct);
+  console.log('fetching S3 key:', tier?.fileKey);
+  if (!tier) {
+    console.error(`No tier found for pct: ${pct}`);
+    return [];
+  }
+
+  // Fetch the tier-specific file
   const getCommand = new GetObjectCommand({
     Bucket: bucketName,
-    Key: 'florida/broward/yearly/mvp_data.json',
+    Key: tier.fileKey,
   });
 
   const response = await s3Client.send(getCommand);
 
   if (!response.Body) {
-    cache = [];
-    return cache;
+    tierCache.set(pct, []);
+    return [];
   }
 
   // Read the stream and parse JSON
@@ -40,16 +52,16 @@ export async function getLoans(): Promise<Loan[]> {
   const data = JSON.parse(bodyString);
 
   // The file contains an array of loan records
+  let loans: Loan[] = [];
   if (Array.isArray(data)) {
-    cache = data;
-  } else {
-    cache = [];
+    loans = data;
   }
 
-  return cache;
+  tierCache.set(pct, loans);
+  return loans;
 }
 
-export async function getLoanById(id: string): Promise<Loan | undefined> {
-  const loans = await getLoans();
+export async function getLoanById(id: string, pct: number): Promise<Loan | undefined> {
+  const loans = await getLoans(pct);
   return loans.find((loan) => loan.doc_number === id);
 }
