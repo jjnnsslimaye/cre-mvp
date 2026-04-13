@@ -17,8 +17,6 @@ const colors = {
   sectionHeaderText: '#FFFFFF',
   accentCyan: '#65CCE6',
   muted: '#94a3b8',
-  accordionHeaderBg: '#f8fafc',
-  accordionHoverBg: '#f0f4f8',
 };
 
 function getUrgencyBadgeStyle(urgency: string) {
@@ -40,161 +38,20 @@ function extractName(raw: string) {
   return raw.split(/\d/)[0].trim();
 }
 
-function UCCAccordion({ borrower, filings }: { borrower: string; filings: UCCFiling[] }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [expandedCollateral, setExpandedCollateral] = useState<Set<number>>(new Set());
-
-  const sortedFilings = [...filings].sort((a, b) => {
-    if (a.Status === 'Filed' && b.Status !== 'Filed') return -1;
-    if (a.Status !== 'Filed' && b.Status === 'Filed') return 1;
-    return 0;
-  });
-
-  const toggleCollateral = (idx: number) => {
-    const newSet = new Set(expandedCollateral);
-    if (newSet.has(idx)) {
-      newSet.delete(idx);
-    } else {
-      newSet.add(idx);
-    }
-    setExpandedCollateral(newSet);
-  };
-
-  return (
-    <div
-      className="rounded-xl"
-      style={{
-        backgroundColor: colors.accordionHeaderBg,
-        border: `1px solid ${colors.cardBorder}`,
-      }}
-    >
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-6 py-4 flex items-center justify-between text-left transition-colors"
-        style={{ color: colors.primaryText, fontWeight: 500 }}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = colors.accordionHoverBg)}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = colors.accordionHeaderBg)}
-      >
-        <span>
-          {borrower} <span style={{ color: colors.accentCyan }}>({filings.length})</span>
-        </span>
-        <span style={{ color: colors.secondaryText }}>{isOpen ? '▼' : '▶'}</span>
-      </button>
-
-      {isOpen && (
-        <div className="px-6 pb-6 space-y-4">
-          {sortedFilings.map((filing, idx) => (
-            <div
-              key={idx}
-              className="rounded-lg p-4 space-y-3"
-              style={{
-                backgroundColor: colors.white,
-                border: `1px solid ${colors.cardBorder}`,
-              }}
-            >
-              <div className="flex gap-2">
-                <span
-                  className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
-                  style={{
-                    backgroundColor: filing.Status === 'Filed' ? '#22c55e' : '#94a3b8',
-                    color: '#ffffff',
-                  }}
-                >
-                  {filing.Status}
-                </span>
-                <span
-                  className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
-                  style={getUrgencyBadgeStyle(filing.urgency)}
-                >
-                  {filing.urgency}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-xs" style={{ color: colors.secondaryText }}>
-                    Date Filed:
-                  </span>
-                  <span className="ml-2" style={{ color: colors.primaryText }}>
-                    {filing['Date Filed']}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-xs" style={{ color: colors.secondaryText }}>
-                    Expires:
-                  </span>
-                  <span className="ml-2" style={{ color: colors.primaryText }}>
-                    {filing.Expires}
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-sm">
-                <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
-                  Secured Party:
-                </div>
-                <div style={{ color: colors.primaryText }}>
-                  {filing.secured_parties.map((party, i) => (
-                    <div key={i}>{extractName(party.raw)}</div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="text-sm">
-                <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
-                  Debtor Party:
-                </div>
-                <div style={{ color: colors.primaryText }}>
-                  {filing.debtor_parties.map((party, i) => (
-                    <div key={i}>{extractName(party.raw)}</div>
-                  ))}
-                </div>
-              </div>
-
-              {filing._ocr_success && filing.collateral ? (
-                <div className="text-sm">
-                  <button
-                    onClick={() => toggleCollateral(idx)}
-                    className="flex items-center gap-2 text-xs mb-2 transition-colors"
-                    style={{ color: colors.secondaryText }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = colors.primaryText)}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = colors.secondaryText)}
-                  >
-                    <span>{expandedCollateral.has(idx) ? '▼' : '▶'}</span>
-                    <span>Collateral</span>
-                  </button>
-                  {expandedCollateral.has(idx) && (
-                    <pre
-                      className="text-xs p-3 rounded max-h-[150px] overflow-y-auto whitespace-pre-wrap"
-                      style={{
-                        backgroundColor: colors.innerCardBg,
-                        border: `1px solid ${colors.cardBorder}`,
-                        color: colors.secondaryText,
-                      }}
-                    >
-                      {filing.collateral}
-                    </pre>
-                  )}
-                </div>
-              ) : (
-                <div className="text-sm">
-                  <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
-                    Collateral:
-                  </div>
-                  <div className="italic" style={{ color: colors.muted }}>
-                    Not extracted
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default function UCCSection({ uccFilings }: UCCSectionProps) {
+  const [collateralExpanded, setCollateralExpanded] = useState(false);
+  const [reasonsOpen, setReasonsOpen] = useState(false);
+
+  // Flatten all filings from all borrowers
+  const allFilings = Object.entries(uccFilings).flatMap(
+    ([borrowerName, filings]) =>
+      filings.map(filing => ({ ...filing, borrowerName }))
+  );
+
+  // Find primary match or fallback to first filing
+  const primaryFiling: (UCCFiling & { borrowerName: string }) | undefined =
+    allFilings.find(f => f.is_primary_match === true) ?? allFilings[0];
+
   return (
     <section
       className="shadow-sm overflow-hidden"
@@ -216,12 +73,202 @@ export default function UCCSection({ uccFilings }: UCCSectionProps) {
           fontSize: '1.125rem',
         }}
       >
-        UCC Filings
+        UCC Filing
       </h2>
-      <div className="p-6 space-y-4">
-        {Object.entries(uccFilings).map(([borrower, filings]) => (
-          <UCCAccordion key={borrower} borrower={borrower} filings={filings} />
-        ))}
+      <div className="p-6">
+        {!primaryFiling ? (
+          <div style={{
+            color: colors.muted,
+            fontStyle: 'italic',
+            padding: '20px',
+            textAlign: 'center',
+          }}>
+            No UCC filings found
+          </div>
+        ) : (
+          <>
+            {/* Borrower name label */}
+            <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '8px' }}>
+              Borrower: {primaryFiling.borrowerName}
+            </div>
+
+            {/* Filing card */}
+            <div
+              className="rounded-lg p-4 space-y-3"
+              style={{
+                backgroundColor: primaryFiling.is_primary_match ? '#f0fbff' : colors.white,
+                border: `1px solid ${colors.cardBorder}`,
+                borderLeft: primaryFiling.is_primary_match ? '3px solid #65CCE6' : `1px solid ${colors.cardBorder}`,
+              }}
+            >
+              {/* Status / Urgency / Confidence / Score bar */}
+              {primaryFiling.is_primary_match && primaryFiling.match_confidence && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  flexWrap: 'wrap',
+                  marginBottom: '12px',
+                }}>
+                  {/* Status badge */}
+                  <span
+                    className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
+                    style={{
+                      backgroundColor: primaryFiling.Status === 'Filed' ? '#22c55e' : '#94a3b8',
+                      color: '#ffffff',
+                    }}
+                  >
+                    {primaryFiling.Status}
+                  </span>
+
+                  {/* Urgency badge */}
+                  <span
+                    className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
+                    style={getUrgencyBadgeStyle(primaryFiling.urgency)}
+                  >
+                    {primaryFiling.urgency}
+                  </span>
+
+                  {/* Confidence badge */}
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    padding: '2px 8px',
+                    borderRadius: '999px',
+                    backgroundColor:
+                      primaryFiling.match_confidence === 'high' ? '#dcfce7' :
+                      primaryFiling.match_confidence === 'medium' ? '#fef9c3' : '#f1f5f9',
+                    color:
+                      primaryFiling.match_confidence === 'high' ? '#166534' :
+                      primaryFiling.match_confidence === 'medium' ? '#854d0e' : '#475569',
+                  }}>
+                    {primaryFiling.match_confidence.charAt(0).toUpperCase() +
+                     primaryFiling.match_confidence.slice(1)} confidence
+                  </span>
+
+                  {/* Score */}
+                  {primaryFiling.match_score != null && (
+                    <span style={{ fontSize: '11px', color: '#585862' }}>
+                      Match score: {primaryFiling.match_score.toFixed(1)}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Match reasons - expandable */}
+              {primaryFiling.is_primary_match &&
+               primaryFiling.match_reasons &&
+               primaryFiling.match_reasons.length > 0 && (
+                <div className="text-sm">
+                  <button
+                    onClick={() => setReasonsOpen(!reasonsOpen)}
+                    className="flex items-center gap-2 text-xs mb-2 transition-colors"
+                    style={{ color: colors.secondaryText }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = colors.primaryText)}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = colors.secondaryText)}
+                  >
+                    <span>{reasonsOpen ? '▼' : '▶'}</span>
+                    <span>Match reasons</span>
+                  </button>
+                  {reasonsOpen && (
+                    <ul style={{
+                      margin: 0,
+                      paddingLeft: '16px',
+                      fontSize: '12px',
+                      color: '#585862',
+                      lineHeight: '1.8',
+                    }}>
+                      {primaryFiling.match_reasons.map((reason, i) => (
+                        <li key={i}>{reason}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+
+              {/* Date Filed and Expires */}
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-xs" style={{ color: colors.secondaryText }}>
+                    Date Filed:
+                  </span>
+                  <span className="ml-2" style={{ color: colors.primaryText }}>
+                    {primaryFiling['Date Filed']}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xs" style={{ color: colors.secondaryText }}>
+                    Expires:
+                  </span>
+                  <span className="ml-2" style={{ color: colors.primaryText }}>
+                    {primaryFiling.Expires}
+                  </span>
+                </div>
+              </div>
+
+              {/* Secured Party */}
+              <div className="text-sm">
+                <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                  Secured Party:
+                </div>
+                <div style={{ color: colors.primaryText }}>
+                  {primaryFiling.secured_parties.map((party, i) => (
+                    <div key={i}>{extractName(party.raw)}</div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Debtor Party */}
+              <div className="text-sm">
+                <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                  Debtor Party:
+                </div>
+                <div style={{ color: colors.primaryText }}>
+                  {primaryFiling.debtor_parties.map((party, i) => (
+                    <div key={i}>{extractName(party.raw)}</div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Collateral */}
+              {primaryFiling._ocr_success && primaryFiling.collateral ? (
+                <div className="text-sm">
+                  <button
+                    onClick={() => setCollateralExpanded(!collateralExpanded)}
+                    className="flex items-center gap-2 text-xs mb-2 transition-colors"
+                    style={{ color: colors.secondaryText }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = colors.primaryText)}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = colors.secondaryText)}
+                  >
+                    <span>{collateralExpanded ? '▼' : '▶'}</span>
+                    <span>Collateral</span>
+                  </button>
+                  {collateralExpanded && (
+                    <pre
+                      className="text-xs p-3 rounded max-h-[150px] overflow-y-auto whitespace-pre-wrap"
+                      style={{
+                        backgroundColor: colors.innerCardBg,
+                        border: `1px solid ${colors.cardBorder}`,
+                        color: colors.secondaryText,
+                      }}
+                    >
+                      {primaryFiling.collateral}
+                    </pre>
+                  )}
+                </div>
+              ) : (
+                <div className="text-sm">
+                  <div className="text-xs mb-1" style={{ color: colors.secondaryText }}>
+                    Collateral:
+                  </div>
+                  <div className="italic" style={{ color: colors.muted }}>
+                    Not extracted
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
