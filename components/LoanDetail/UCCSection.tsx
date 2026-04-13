@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { UCCFiling } from '@/lib/types';
+import type { UCCFiling, UCCFilingWithBorrower } from '@/lib/types';
 
 interface UCCSectionProps {
   uccFilings: Record<string, UCCFiling[]>;
@@ -43,13 +43,13 @@ export default function UCCSection({ uccFilings }: UCCSectionProps) {
   const [reasonsOpen, setReasonsOpen] = useState(false);
 
   // Flatten all filings from all borrowers
-  const allFilings: (UCCFiling & { borrowerName: string })[] =
+  const allFilings: UCCFilingWithBorrower[] =
     Object.entries(uccFilings).flatMap(
       ([borrowerName, filings]) =>
         filings.map(filing => ({
           ...filing,
           borrowerName
-        } as UCCFiling & { borrowerName: string }))
+        } as UCCFilingWithBorrower))
     );
 
   // Find primary match or fallback to first filing

@@ -20,6 +20,17 @@ export interface UCCFiling {
   _ocr_success: boolean;
   collateral?: string;
   urgency: LoanUrgency;
+  match_score?: number;
+  match_confidence?: 'high' | 'medium' | 'low';
+  match_reasons?: string[];
+  name_similarity?: number;
+  date_proximity?: number;
+  days_after_mortgage?: number;
+  is_primary_match?: boolean;
+}
+
+export interface UCCFilingWithBorrower extends UCCFiling {
+  borrowerName: string;
 }
 
 // Sunbiz interfaces
