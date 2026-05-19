@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { cookies } from 'next/headers';
 
 const colors = {
   navBg: '#123B56',
@@ -13,7 +14,10 @@ const colors = {
   black: '#000000',
 };
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies();
+  const isAuthenticated = !!cookieStore.get('maturefi_tier');
+
   return (
     <div style={{ backgroundColor: colors.featuresBg }}>
       {/* SECTION 1 — NAVBAR */}
@@ -39,27 +43,29 @@ export default function Home() {
 
         {/* Right: Navigation buttons */}
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <Link
-            href="/login"
-            style={{
-              backgroundColor: colors.white,
-              borderRadius: '4px',
-              padding: '0px 32px',
-              height: '48px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 600,
-              fontSize: '16px',
-              color: colors.navBg,
-              textDecoration: 'none',
-            }}
-          >
-            Login
-          </Link>
+          {!isAuthenticated && (
+            <Link
+              href="/login"
+              style={{
+                backgroundColor: colors.white,
+                borderRadius: '4px',
+                padding: '0px 32px',
+                height: '48px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 600,
+                fontSize: '16px',
+                color: colors.navBg,
+                textDecoration: 'none',
+              }}
+            >
+              Login
+            </Link>
+          )}
 
           <Link
-            href="/early-access"
+            href="/loans"
             style={{
               backgroundColor: colors.accentCyan,
               borderRadius: '4px',
@@ -74,7 +80,7 @@ export default function Home() {
               textDecoration: 'none',
             }}
           >
-            Get early access ↗
+            Explore the Data →
           </Link>
         </div>
       </nav>
@@ -259,7 +265,7 @@ export default function Home() {
           }}
         >
           <Link
-            href="/early-access"
+            href="/loans"
             style={{
               backgroundColor: colors.accentCyan,
               borderRadius: '4px',
@@ -274,7 +280,7 @@ export default function Home() {
               textDecoration: 'none',
             }}
           >
-            Get early access ↗
+            Explore the Data →
           </Link>
 
           <p
@@ -286,7 +292,7 @@ export default function Home() {
               margin: 0,
             }}
           >
-            Just a 15-min chat. No credit card required.
+            No signup required. Explore free.
           </p>
         </div>
       </section>
@@ -665,7 +671,7 @@ export default function Home() {
               color: colors.accentCyan,
             }}
           >
-            Get early access now.
+            Explore the data now.
           </div>
         </div>
 
@@ -679,7 +685,7 @@ export default function Home() {
           }}
         >
           <Link
-            href="/early-access"
+            href="/loans"
             style={{
               backgroundColor: colors.accentCyan,
               borderRadius: '4px',
@@ -694,7 +700,7 @@ export default function Home() {
               textDecoration: 'none',
             }}
           >
-            Get early access ↗
+            Explore the Data →
           </Link>
 
           <p
@@ -706,7 +712,7 @@ export default function Home() {
               margin: 0,
             }}
           >
-            Just a 15-min chat. No credit card required.
+            No signup required. Explore free.
           </p>
         </div>
       </div>

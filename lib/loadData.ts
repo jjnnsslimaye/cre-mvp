@@ -17,20 +17,21 @@ const s3Client = new S3Client({
 
 const bucketName = process.env.S3_BUCKET!;
 
-export async function getLoans(pct: number): Promise<Loan[]> {
-  console.log('getLoans called with pct:', pct);
-  console.log('tierCache has pct?', tierCache.has(pct));
+export async function getLoans(pct?: number): Promise<Loan[]> {
+  const tierPct = pct ?? 10; // default to 10% for unauthenticated
+  console.log('getLoans called with pct:', tierPct);
+  console.log('tierCache has pct?', tierCache.has(tierPct));
 
   // Return cache if available for this tier
-  if (tierCache.has(pct)) {
-    return tierCache.get(pct)!;
+  if (tierCache.has(tierPct)) {
+    return tierCache.get(tierPct)!;
   }
 
   // Find the matching tier
-  const tier = TIERS.find(t => t.pct === pct);
+  const tier = TIERS.find(t => t.pct === tierPct);
   console.log('fetching S3 key:', tier?.fileKey);
   if (!tier) {
-    console.error(`No tier found for pct: ${pct}`);
+    console.error(`No tier found for pct: ${tierPct}`);
     return [];
   }
 
@@ -43,7 +44,7 @@ export async function getLoans(pct: number): Promise<Loan[]> {
   const response = await s3Client.send(getCommand);
 
   if (!response.Body) {
-    tierCache.set(pct, []);
+    tierCache.set(tierPct, []);
     return [];
   }
 
@@ -57,11 +58,11 @@ export async function getLoans(pct: number): Promise<Loan[]> {
     loans = data;
   }
 
-  tierCache.set(pct, loans);
+  tierCache.set(tierPct, loans);
   return loans;
 }
 
-export async function getLoanById(id: string, pct: number): Promise<Loan | undefined> {
+export async function getLoanById(id: string, pct?: number): Promise<Loan | undefined> {
   const loans = await getLoans(pct);
   return loans.find((loan) => loan.doc_number === id);
 }

@@ -4,12 +4,16 @@ import { useState } from 'react';
 import type { Loan } from '@/lib/types';
 import FilterBar, { type FilterState } from './FilterBar';
 import LoanTable from './LoanTable';
+import UpgradeBanner from './UpgradeBanner';
+import EmailCaptureModal from './EmailCaptureModal';
+import TermsModal from './TermsModal';
 
 interface LoansPageClientProps {
   loans: Loan[];
+  isAuthenticated: boolean;
 }
 
-export default function LoansPageClient({ loans }: LoansPageClientProps) {
+export default function LoansPageClient({ loans, isAuthenticated }: LoansPageClientProps) {
   const [filters, setFilters] = useState<FilterState>({
     borrowers: [],
     lenders: [],
@@ -18,15 +22,19 @@ export default function LoansPageClient({ loans }: LoansPageClientProps) {
     startDate: '',
     endDate: '',
   });
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <div>
+    <>
+      <TermsModal />
+      {!isAuthenticated && <UpgradeBanner onUpgradeClick={() => setModalOpen(true)} />}
       <FilterBar
         filters={filters}
         onFilterChange={setFilters}
         loans={loans}
       />
       <LoanTable loans={loans} filters={filters} />
-    </div>
+      <EmailCaptureModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+    </>
   );
 }

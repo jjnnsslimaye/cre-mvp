@@ -46,7 +46,8 @@ function getUrgencyBadgeStyle(urgency: string) {
 export default async function LoanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const cookieStore = await cookies();
-  const tierPct = parseInt(cookieStore.get('maturefi_tier')?.value ?? '100');
+  const tierCookie = cookieStore.get('maturefi_tier');
+  const tierPct = tierCookie ? parseInt(tierCookie.value) : undefined;
 
   const loan = await getLoanById(id, tierPct);
 

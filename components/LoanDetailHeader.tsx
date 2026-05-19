@@ -39,7 +39,7 @@ export default function LoanDetailHeader() {
         </Link>
 
         {/* Right: Navigation links */}
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <Link
             href="/loans"
             style={{
@@ -61,25 +61,6 @@ export default function LoanDetailHeader() {
           >
             <span>←</span>
             <span>Back to Loans</span>
-          </Link>
-
-          <Link
-            href="/early-access"
-            style={{
-              backgroundColor: colors.accentCyan,
-              borderRadius: '4px',
-              padding: '0px 32px',
-              height: '48px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 600,
-              fontSize: '16px',
-              color: colors.black,
-              textDecoration: 'none',
-            }}
-          >
-            Get early access ↗
           </Link>
         </div>
       </div>

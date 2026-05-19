@@ -10,20 +10,19 @@ const colors = {
 export default async function LoansPage() {
   const cookieStore = await cookies();
   const tierCookie = cookieStore.get('maturefi_tier');
-  console.log('maturefi_tier cookie:', tierCookie);
-  const tierPct = parseInt(tierCookie?.value ?? '100');
-  console.log('tierPct parsed as:', tierPct);
+  const tierPct = tierCookie ? parseInt(tierCookie.value) : undefined;
+  const isAuthenticated = !!tierCookie;
   const loans = await getLoans(tierPct);
-  console.log('loans loaded:', loans.length);
+  console.log('loans loaded:', loans.length, 'authenticated:', isAuthenticated);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
       {/* Header */}
-      <Navbar />
+      <Navbar isAuthenticated={isAuthenticated} />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <LoansPageClient loans={loans} />
+        <LoansPageClient loans={loans} isAuthenticated={isAuthenticated} />
       </main>
     </div>
   );
