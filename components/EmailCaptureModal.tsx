@@ -11,6 +11,7 @@ export default function EmailCaptureModal({ isOpen, onClose }: EmailCaptureModal
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
+  const [role, setRole] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -32,6 +33,7 @@ export default function EmailCaptureModal({ isOpen, onClose }: EmailCaptureModal
           name,
           email,
           company,
+          role,
           source: 'modal',
         }),
       });
@@ -225,7 +227,7 @@ export default function EmailCaptureModal({ isOpen, onClose }: EmailCaptureModal
               </div>
 
               {/* Company */}
-              <div style={{ marginBottom: '24px' }}>
+              <div style={{ marginBottom: '16px' }}>
                 <label
                   htmlFor="company"
                   style={{
@@ -258,6 +260,54 @@ export default function EmailCaptureModal({ isOpen, onClose }: EmailCaptureModal
                   onFocus={(e) => (e.currentTarget.style.borderColor = '#65CCE6')}
                   onBlur={(e) => (e.currentTarget.style.borderColor = '#e2e8f0')}
                 />
+              </div>
+
+              {/* Role */}
+              <div style={{ marginBottom: '24px' }}>
+                <label
+                  htmlFor="role"
+                  style={{
+                    display: 'block',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontWeight: 500,
+                    fontSize: '13px',
+                    color: '#262832',
+                    marginBottom: '6px',
+                  }}
+                >
+                  I am a...
+                </label>
+                <select
+                  id="role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    color: '#262832',
+                    fontFamily: 'inherit',
+                    fontSize: '15px',
+                    backgroundColor: '#ffffff',
+                    appearance: 'none',
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23262832' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 14px center',
+                    paddingRight: '40px',
+                    outline: 'none',
+                    cursor: 'pointer',
+                  }}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = '#65CCE6')}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = '#e2e8f0')}
+                >
+                  <option value="">Select your role</option>
+                  <option value="Lender">Lender</option>
+                  <option value="Broker">Broker</option>
+                  <option value="Developer">Developer</option>
+                  <option value="Investor">Investor</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
 
               {/* Submit button */}
