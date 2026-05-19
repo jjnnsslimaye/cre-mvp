@@ -80,7 +80,7 @@ export default async function Home() {
               textDecoration: 'none',
             }}
           >
-            Explore the Data →
+            Find ReFi Deals →
           </Link>
         </div>
       </nav>
@@ -280,7 +280,7 @@ export default async function Home() {
               textDecoration: 'none',
             }}
           >
-            Explore the Data →
+            Find ReFi Deals →
           </Link>
 
           <p
@@ -700,7 +700,7 @@ export default async function Home() {
               textDecoration: 'none',
             }}
           >
-            Explore the Data →
+            Find ReFi Deals →
           </Link>
 
           <p
