@@ -36,9 +36,11 @@ export default function TermsModal() {
         style={{
           backgroundColor: '#ffffff',
           borderRadius: '12px',
-          padding: '40px',
+          padding: 'clamp(20px, 4vw, 40px)',
           maxWidth: '520px',
           width: '100%',
+          maxHeight: '85vh',
+          overflowY: 'auto',
           boxShadow: '0px 20px 40px rgba(0, 0, 0, 0.2)',
         }}
       >
@@ -53,7 +55,7 @@ export default function TermsModal() {
           <div
             style={{
               fontFamily: 'inherit',
-              fontSize: '20px',
+              fontSize: 'clamp(16px, 4vw, 20px)',
               fontWeight: 700,
               color: '#262832',
               marginBottom: '4px',
@@ -63,7 +65,7 @@ export default function TermsModal() {
           </div>
           <div
             style={{
-              fontSize: '13px',
+              fontSize: 'clamp(11px, 3vw, 13px)',
               color: '#585862',
             }}
           >
@@ -74,7 +76,7 @@ export default function TermsModal() {
         {/* Terms content */}
         <div
           style={{
-            fontSize: '13px',
+            fontSize: 'clamp(11px, 3vw, 13px)',
             color: '#585862',
             lineHeight: '1.8',
             marginBottom: '24px',
@@ -131,38 +133,48 @@ export default function TermsModal() {
           </div>
         </div>
 
-        {/* Accept button */}
-        <button
-          onClick={handleAccept}
-          style={{
-            width: '100%',
-            height: '48px',
-            backgroundColor: '#123B56',
-            color: '#ffffff',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '15px',
-            fontWeight: 600,
-            fontFamily: 'inherit',
-            cursor: 'pointer',
-            marginBottom: '12px',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1c71af')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#123B56')}
-        >
-          I Understand and Accept
-        </button>
-
+        {/* Accept button - sticky at bottom */}
         <div
           style={{
-            fontSize: '11px',
-            color: '#94a3b8',
-            textAlign: 'center',
-            lineHeight: '1.6',
+            position: 'sticky',
+            bottom: 0,
+            backgroundColor: '#ffffff',
+            paddingTop: '16px',
+            marginTop: '8px',
           }}
         >
-          By clicking above you acknowledge these terms for this session. Full terms available upon
-          request at info@maturefi.com
+          <button
+            onClick={handleAccept}
+            style={{
+              width: '100%',
+              height: '48px',
+              backgroundColor: '#123B56',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '15px',
+              fontWeight: 600,
+              fontFamily: 'inherit',
+              cursor: 'pointer',
+              marginBottom: '12px',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1c71af')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#123B56')}
+          >
+            I Understand and Accept
+          </button>
+
+          <div
+            style={{
+              fontSize: '11px',
+              color: '#94a3b8',
+              textAlign: 'center',
+              lineHeight: '1.6',
+            }}
+          >
+            By clicking above you acknowledge these terms for this session. Full terms available upon
+            request at info@maturefi.com
+          </div>
         </div>
       </div>
     </div>

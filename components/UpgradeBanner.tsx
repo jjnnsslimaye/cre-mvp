@@ -7,6 +7,7 @@ interface UpgradeBannerProps {
 export default function UpgradeBanner({ onUpgradeClick }: UpgradeBannerProps) {
   return (
     <div
+      className="flex flex-col items-center text-center gap-4 md:flex-row md:items-center md:text-left md:gap-0 md:justify-between"
       style={{
         width: '100%',
         backgroundColor: '#f0fbff',
@@ -15,11 +16,6 @@ export default function UpgradeBanner({ onUpgradeClick }: UpgradeBannerProps) {
         padding: '20px 32px',
         margin: '0 0 24px 0',
         boxShadow: '0 4px 20px rgba(101,204,230,0.15)',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '24px',
       }}
     >
       {/* Left side */}
@@ -28,7 +24,7 @@ export default function UpgradeBanner({ onUpgradeClick }: UpgradeBannerProps) {
           style={{
             fontFamily: 'Poppins, sans-serif',
             fontWeight: 700,
-            fontSize: '18px',
+            fontSize: 'clamp(14px, 4vw, 18px)',
             color: '#123B56',
             marginBottom: '6px',
           }}
@@ -39,7 +35,7 @@ export default function UpgradeBanner({ onUpgradeClick }: UpgradeBannerProps) {
           style={{
             fontFamily: 'Poppins, sans-serif',
             fontWeight: 400,
-            fontSize: '13px',
+            fontSize: 'clamp(11px, 3vw, 13px)',
             color: '#585862',
           }}
         >
@@ -50,6 +46,7 @@ export default function UpgradeBanner({ onUpgradeClick }: UpgradeBannerProps) {
       {/* Right side */}
       <button
         onClick={onUpgradeClick}
+        className="w-full md:w-auto"
         style={{
           backgroundColor: '#ef4444',
           color: '#ffffff',

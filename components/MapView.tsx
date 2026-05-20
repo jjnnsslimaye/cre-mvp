@@ -20,11 +20,15 @@ interface MapViewProps {
 
 export default function MapView({ lat, lng, label }: MapViewProps) {
   return (
-    <div style={{ height: '100%', width: '100%', minHeight: '400px' }}>
+    <div
+      id={`map-${lat}-${lng}`}
+      style={{ height: '100%', width: '100%', minHeight: '300px' }}
+    >
       <MapContainer
         center={[lat, lng]}
         zoom={16}
         style={{ height: '100%', width: '100%', borderRadius: '0.5rem' }}
+        scrollWheelZoom={false}
       >
         <TileLayer
           attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"

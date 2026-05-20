@@ -22,9 +22,9 @@ export default async function Home() {
     <div style={{ backgroundColor: colors.featuresBg }}>
       {/* SECTION 1 — NAVBAR */}
       <nav
+        className="px-5 py-4 md:px-24 md:py-5"
         style={{
           backgroundColor: colors.navBg,
-          padding: '20px 97px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -32,9 +32,9 @@ export default async function Home() {
       >
         {/* Left: MatuReFi wordmark */}
         <div
+          className="text-[22px] md:text-[30px]"
           style={{
             fontWeight: 700,
-            fontSize: '30px',
             color: colors.white,
           }}
         >
@@ -46,16 +46,14 @@ export default async function Home() {
           {!isAuthenticated && (
             <Link
               href="/login"
+              className="px-3 py-1 md:px-8 md:py-0 md:h-12 text-sm md:text-base"
               style={{
                 backgroundColor: colors.white,
                 borderRadius: '4px',
-                padding: '0px 32px',
-                height: '48px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: 600,
-                fontSize: '16px',
                 color: colors.navBg,
                 textDecoration: 'none',
               }}
@@ -66,12 +64,12 @@ export default async function Home() {
 
           <Link
             href="/loans"
+            className="hidden md:flex"
             style={{
               backgroundColor: colors.accentCyan,
               borderRadius: '4px',
               padding: '0px 32px',
               height: '48px',
-              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 600,
@@ -87,34 +85,31 @@ export default async function Home() {
 
       {/* SECTION 2 — ABOVE THE FOLD (Hero) */}
       <section
+        className="pt-8 pb-16 px-5 md:pt-[100px] md:pb-[100px] md:px-0 min-h-screen md:min-h-[850px]"
         style={{
           background: colors.heroBg,
-          minHeight: '850px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '100px 0px',
         }}
       >
         {/* Hero inner container */}
         <div
+          className="flex flex-col md:flex-row gap-10 md:gap-[60px]"
           style={{
-            display: 'flex',
-            gap: '60px',
             alignItems: 'center',
             maxWidth: '1200px',
             padding: '0 20px',
-            flexWrap: 'nowrap',
           }}
         >
           {/* LEFT COLUMN (copy) */}
           <div style={{ flex: '1 1 auto', minWidth: '300px' }}>
             {/* Headline */}
             <h1
+              className="text-[32px] md:text-[42px]"
               style={{
                 fontWeight: 700,
-                fontSize: '42px',
                 color: colors.white,
                 lineHeight: '120%',
                 margin: 0,
@@ -125,9 +120,9 @@ export default async function Home() {
 
             {/* Explainer */}
             <p
+              className="text-[15px] md:text-lg"
               style={{
                 fontWeight: 400,
-                fontSize: '18px',
                 color: colors.white,
                 lineHeight: '120%',
                 marginTop: '14px',
@@ -192,7 +187,7 @@ export default async function Home() {
           </div>
 
           {/* RIGHT COLUMN (product mockup) */}
-          <div style={{ flex: '0 0 500px', display: 'flex', justifyContent: 'center' }}>
+          <div className="hidden md:flex" style={{ flex: '0 0 500px', justifyContent: 'center' }}>
             <div
               style={{
                 position: 'relative',
@@ -266,6 +261,7 @@ export default async function Home() {
         >
           <Link
             href="/loans"
+            className="w-full md:w-auto"
             style={{
               backgroundColor: colors.accentCyan,
               borderRadius: '4px',
@@ -299,23 +295,22 @@ export default async function Home() {
 
       {/* SECTION 3 — FEATURES */}
       <section
+        className="px-5 pt-24 pb-10 md:px-[170px] md:py-20 gap-6 md:gap-[60px]"
         style={{
           backgroundColor: colors.featuresBg,
-          padding: '80px 170px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '60px',
         }}
       >
         {/* Section headline */}
         <h2
+          className="text-[26px] leading-tight md:text-4xl md:leading-[130%]"
           style={{
             fontWeight: 700,
-            fontSize: '36px',
             textAlign: 'center',
-            lineHeight: '130%',
             margin: 0,
+            marginBottom: 'clamp(32px, 6vw, 60px)',
           }}
         >
           <span style={{ color: colors.primaryText }}>
@@ -329,24 +324,21 @@ export default async function Home() {
 
         {/* FEATURE CARD 1 */}
         <div
+          className="flex flex-col md:flex-row gap-10 p-6 md:p-[60px] md:px-[100px]"
           style={{
             backgroundColor: colors.white,
             borderRadius: '40px',
-            padding: '60px 100px',
-            display: 'flex',
-            gap: '40px',
             alignItems: 'center',
             maxWidth: '1276px',
             width: '100%',
-            flexWrap: 'wrap',
           }}
         >
           {/* Left (copy) */}
-          <div style={{ width: '470px', flex: '0 0 auto' }}>
+          <div className="w-full md:w-[470px]" style={{ flex: '0 0 auto' }}>
             <h3
+              className="text-xl md:text-[26px]"
               style={{
                 fontWeight: 500,
-                fontSize: '26px',
                 color: colors.primaryText,
                 letterSpacing: '-0.45px',
                 margin: 0,
@@ -370,7 +362,7 @@ export default async function Home() {
           </div>
 
           {/* Right (mockup placeholder) */}
-          <div style={{ flex: 1, minWidth: '300px', overflow: 'visible' }}>
+          <div className="hidden md:block" style={{ flex: 1, minWidth: '300px', overflow: 'visible' }}>
             {/* FEATURE 1 — feature1-loan-table.png + feature1-urgency.png */}
             <div
               style={{
@@ -422,24 +414,21 @@ export default async function Home() {
 
         {/* FEATURE CARD 2 */}
         <div
+          className="flex flex-col md:flex-row gap-10 p-6 md:p-[60px] md:px-[100px]"
           style={{
             backgroundColor: colors.white,
             borderRadius: '40px',
-            padding: '60px 100px',
-            display: 'flex',
-            gap: '40px',
             alignItems: 'center',
             maxWidth: '1276px',
             width: '100%',
-            flexWrap: 'wrap',
           }}
         >
           {/* Left (copy) */}
-          <div style={{ width: '470px', flex: '0 0 auto' }}>
+          <div className="w-full md:w-[470px]" style={{ flex: '0 0 auto' }}>
             <h3
+              className="text-xl md:text-[26px]"
               style={{
                 fontWeight: 500,
-                fontSize: '26px',
                 color: colors.primaryText,
                 letterSpacing: '-0.45px',
                 margin: 0,
@@ -463,7 +452,7 @@ export default async function Home() {
           </div>
 
           {/* Right (mockup placeholder) */}
-          <div style={{ flex: 1, minWidth: '300px' }}>
+          <div className="hidden md:block" style={{ flex: 1, minWidth: '300px' }}>
             {/* FEATURE 2 — feature2-map.png + feature2-contacts.png + feature2-ucc.png */}
             <div
               style={{
@@ -533,24 +522,21 @@ export default async function Home() {
 
         {/* FEATURE CARD 3 */}
         <div
+          className="flex flex-col md:flex-row gap-10 p-6 md:p-[60px] md:px-[100px]"
           style={{
             backgroundColor: colors.white,
             borderRadius: '40px',
-            padding: '60px 100px',
-            display: 'flex',
-            gap: '40px',
             alignItems: 'center',
             maxWidth: '1276px',
             width: '100%',
-            flexWrap: 'wrap',
           }}
         >
           {/* Left (copy) */}
-          <div style={{ width: '470px', flex: '0 0 auto' }}>
+          <div className="w-full md:w-[470px]" style={{ flex: '0 0 auto' }}>
             <h3
+              className="text-xl md:text-[26px]"
               style={{
                 fontWeight: 500,
-                fontSize: '26px',
                 color: colors.primaryText,
                 letterSpacing: '-0.45px',
                 margin: 0,
@@ -574,7 +560,7 @@ export default async function Home() {
           </div>
 
           {/* Right (mockup placeholder) */}
-          <div style={{ flex: 1, minWidth: '300px', display: 'flex', justifyContent: 'center' }}>
+          <div className="hidden md:flex" style={{ flex: 1, minWidth: '300px', justifyContent: 'center' }}>
             <div
               style={{
                 position: 'relative',
@@ -639,36 +625,35 @@ export default async function Home() {
 
       {/* SECTION 4 — BOTTOM CTA CARD */}
       <div
+        className="p-10 md:p-[60px] gap-6 md:gap-[40px] mt-24 md:mt-0 mx-auto mb-20"
         style={{
           maxWidth: '1112px',
           width: '100%',
           backgroundColor: colors.ctaCardBg,
           boxShadow: '0px 42px 42px rgba(0, 66, 110, 0.16)',
-          borderRadius: '40px',
-          padding: '60px',
+          borderRadius: 'clamp(20px, 5vw, 40px)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '40px',
-          margin: '0 auto 80px auto',
         }}
       >
         {/* Headline */}
         <div style={{ textAlign: 'center' }}>
           <div
+            className="text-2xl md:text-[36px]"
             style={{
               fontWeight: 700,
-              fontSize: '36px',
               color: colors.primaryText,
             }}
           >
             Ready to take a closer look?
           </div>
           <div
+            className="text-2xl md:text-[36px]"
             style={{
               fontWeight: 700,
-              fontSize: '36px',
               color: colors.accentCyan,
+              marginBottom: '8px',
             }}
           >
             Explore the data now.
@@ -686,6 +671,7 @@ export default async function Home() {
         >
           <Link
             href="/loans"
+            className="w-full md:w-auto"
             style={{
               backgroundColor: colors.accentCyan,
               borderRadius: '4px',

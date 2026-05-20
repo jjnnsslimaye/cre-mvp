@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import type { Loan } from '@/lib/types';
 import type { FilterState } from './FilterBar';
@@ -82,6 +82,14 @@ function EntityList({ entities }: { entities: string[] }) {
 export default function LoanTable({ loans, filters }: LoanTableProps) {
   const [sortField, setSortField] = useState<SortField>('loan_amount');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 25;
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  // Reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -169,6 +177,14 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
     return sortDirection === 'asc' ? comparison : -comparison;
   });
 
+  // Apply pagination
+  const totalFiltered = sortedLoans.length;
+  const totalPages = Math.ceil(totalFiltered / ITEMS_PER_PAGE);
+  const paginatedLoans = sortedLoans.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   const getUrgencyBadgeStyle = (urgency: string) => {
     switch (urgency) {
       case 'critical':
@@ -210,15 +226,21 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
     </th>
   );
 
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    tableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <div>
       {/* Count */}
       <div className="mb-4 text-sm" style={{ color: '#585862' }}>
-        Showing {sortedLoans.length} of {loans.length} loans
+        Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, totalFiltered)} of {totalFiltered} loans
       </div>
 
       {/* Table */}
       <div
+        ref={tableRef}
         className="rounded-xl shadow-sm"
         style={{
           backgroundColor: colors.white,
@@ -248,7 +270,7 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
               </tr>
             </thead>
             <tbody>
-              {sortedLoans.length === 0 ? (
+              {paginatedLoans.length === 0 ? (
                 <tr>
                   <td
                     colSpan={6}
@@ -259,7 +281,7 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
                   </td>
                 </tr>
               ) : (
-                sortedLoans.map((loan, index) => (
+                paginatedLoans.map((loan, index) => (
                   <tr
                     key={loan.doc_number}
                     className="transition-colors cursor-pointer"
@@ -333,6 +355,88 @@ export default function LoanTable({ loans, filters }: LoanTableProps) {
           </table>
         </div>
       </div>
+
+      {/* Pagination Controls */}
+      {totalFiltered > ITEMS_PER_PAGE && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            marginTop: '24px',
+          }}
+        >
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: '14px',
+              fontWeight: 500,
+              padding: '8px 16px',
+              borderRadius: '6px',
+              border: '1px solid #e2e8f0',
+              backgroundColor: currentPage === 1 ? '#f8fafc' : '#ffffff',
+              color: currentPage === 1 ? '#94a3b8' : '#262832',
+              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (currentPage !== 1) {
+                e.currentTarget.style.backgroundColor = '#f8fafc';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== 1) {
+                e.currentTarget.style.backgroundColor = '#ffffff';
+              }
+            }}
+          >
+            ← Previous
+          </button>
+
+          <div
+            style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: '14px',
+              fontWeight: 400,
+              color: '#585862',
+            }}
+          >
+            Page {currentPage} of {totalPages}
+          </div>
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: '14px',
+              fontWeight: 500,
+              padding: '8px 16px',
+              borderRadius: '6px',
+              border: '1px solid #e2e8f0',
+              backgroundColor: currentPage === totalPages ? '#f8fafc' : '#ffffff',
+              color: currentPage === totalPages ? '#94a3b8' : '#262832',
+              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (currentPage !== totalPages) {
+                e.currentTarget.style.backgroundColor = '#f8fafc';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== totalPages) {
+                e.currentTarget.style.backgroundColor = '#ffffff';
+              }
+            }}
+          >
+            Next →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

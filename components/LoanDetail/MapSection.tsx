@@ -61,8 +61,8 @@ export default function MapSection({ lat, lng, label, address }: MapSectionProps
         </div>
 
         {hasCoordinates && lat !== null && lng !== null ? (
-          <div style={{ height: '400px' }}>
-            <MapView lat={lat} lng={lng} label={label} />
+          <div style={{ height: '400px', minHeight: '300px' }}>
+            <MapView key={`${lat}-${lng}`} lat={lat} lng={lng} label={label} />
           </div>
         ) : (
           <div
@@ -70,7 +70,8 @@ export default function MapSection({ lat, lng, label, address }: MapSectionProps
             style={{
               backgroundColor: colors.innerCardBg,
               color: colors.muted,
-              minHeight: '400px',
+              height: '400px',
+              minHeight: '300px',
             }}
           >
             Location data unavailable

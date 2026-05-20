@@ -67,9 +67,9 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
 
         {/* SECTIONS 1 & 3 — Loan Overview + Property & Location (Side by Side) */}
-        <div className="flex gap-12" style={{ minHeight: '500px' }}>
+        <div className="flex flex-col md:flex-row gap-12 min-h-0 md:min-h-[500px]">
           {/* Left: Loan Overview (20% width) */}
-          <section className="w-1/5 flex-shrink-0 flex flex-col">
+          <section className="w-full md:w-1/5 flex-shrink-0 flex flex-col">
             <div
               className="shadow-sm flex-1 overflow-hidden"
               style={{
@@ -175,7 +175,7 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
           </section>
 
           {/* Right: Property & Location (remaining width) */}
-          <section className="flex-1 flex flex-col min-w-0">
+          <section className="w-full md:flex-1 flex flex-col min-w-0">
             <MapSection
               lat={loan.geocoding_data?.property_address?.coordinates?.latitude ?? null}
               lng={loan.geocoding_data?.property_address?.coordinates?.longitude ?? null}
