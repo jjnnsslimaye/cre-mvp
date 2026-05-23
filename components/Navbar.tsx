@@ -30,17 +30,32 @@ export default function Navbar({ isAuthenticated = false }: NavbarProps) {
         }}
       >
         {/* Left: MatuReFi wordmark */}
-        <Link
-          href="/"
-          style={{
-            fontWeight: 700,
-            fontSize: '30px',
-            color: colors.white,
-            textDecoration: 'none',
-          }}
-        >
-          MatuReFi
-        </Link>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <Link
+            href="/"
+            style={{
+              fontWeight: 700,
+              fontSize: '30px',
+              color: colors.white,
+              textDecoration: 'none',
+            }}
+          >
+            MatuReFi
+          </Link>
+          <div
+            style={{
+              fontSize: '10px',
+              fontWeight: 700,
+              color: '#f0c811',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              fontFamily: 'Poppins, sans-serif',
+              lineHeight: 1,
+            }}
+          >
+            Open Beta · Free Access
+          </div>
+        </div>
 
         {/* Right: Login button */}
         {!isAuthenticated && (

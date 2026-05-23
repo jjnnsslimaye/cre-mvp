@@ -31,14 +31,30 @@ export default async function Home() {
         }}
       >
         {/* Left: MatuReFi wordmark */}
-        <div
-          className="text-[22px] md:text-[30px]"
-          style={{
-            fontWeight: 700,
-            color: colors.white,
-          }}
-        >
-          MatuReFi
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <div
+            style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontWeight: 700,
+              fontSize: '30px',
+              color: colors.white,
+            }}
+          >
+            MatuReFi
+          </div>
+          <div
+            style={{
+              fontSize: '10px',
+              fontWeight: 700,
+              color: '#f0c811',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              fontFamily: 'Poppins, sans-serif',
+              lineHeight: 1,
+            }}
+          >
+            Open Beta · Free Access
+          </div>
         </div>
 
         {/* Right: Navigation buttons */}
@@ -46,16 +62,20 @@ export default async function Home() {
           {!isAuthenticated && (
             <Link
               href="/login"
-              className="px-3 py-1 md:px-8 md:py-0 md:h-12 text-sm md:text-base"
               style={{
                 backgroundColor: colors.white,
                 borderRadius: '4px',
+                padding: '0px 32px',
+                height: '48px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                fontFamily: 'Poppins, sans-serif',
                 fontWeight: 600,
+                fontSize: '16px',
                 color: colors.navBg,
                 textDecoration: 'none',
+                whiteSpace: 'nowrap',
               }}
             >
               Login
@@ -128,7 +148,7 @@ export default async function Home() {
                 marginTop: '14px',
               }}
             >
-              Our free-to-access platform makes it easy for lenders to find borrowers with maturing loans in commercial real estate.
+              Our platform helps you find borrowers with maturing loans in commercial real estate, before they hit the market.
             </p>
 
             {/* Bullet points */}
@@ -146,7 +166,7 @@ export default async function Home() {
                   />
                 </svg>
                 <span style={{ fontWeight: 400, fontSize: '16px', color: colors.white }}>
-                  Only pay when you do deals
+                  Currently free-to-access (in beta)
                 </span>
               </div>
 
@@ -446,8 +466,7 @@ export default async function Home() {
               }}
             >
               All loan data is refreshed weekly with updates from UCC filings &
-              county records, plus borrower contact info when you're ready to
-              start talking.
+              county records.
             </p>
           </div>
 
@@ -542,7 +561,7 @@ export default async function Home() {
                 margin: 0,
               }}
             >
-              Only pay when you do deals
+              Get the contact info to close deals
             </h3>
             <p
               style={{
@@ -553,9 +572,7 @@ export default async function Home() {
                 marginTop: '16px',
               }}
             >
-              Forget the SaaS subscription. You can start searching for
-              borrowers with expiring loans for free, and pay a small
-              transaction fee when the deal is done.
+              Easily find the borrower’s email or phone number for any loan, when you're ready to start talking.
             </p>
           </div>
 
